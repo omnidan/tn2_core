@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  main.cpp
+ *       Filename:  socket.cpp
  *
- *    Description:  Main entry for the http request api
+ *    Description:  Socket control
  *
  *        Version:  1.0
- *        Created:  27/01/13 18:18:34
+ *        Created:  27/01/13 20:55:15
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,7 +16,7 @@
  * =====================================================================================
  */
 
-#define SECTION "main"
+#define SECTION "socket"
 
 // Standard headers
 #include <stdlib.h>
