@@ -1,5 +1,14 @@
-httpapi: clean
-	g++ -o httpapi main.cpp logger.cpp -ansi -pedantic -Wall
+EXECUTABLE=httpapi
+SOURCES=main.cpp logger.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+CPP=g++
+FLAGS=-ansi -pedantic -Wall
+LDFLAGS=
+
+all: $(EXECUTABLE)
+
+$(EXECUTABLE):
+	$(CPP) $(SOURCES) $(FLAGS) -o $@
 
 clean:
-	rm -rf ./*.o ./httpapi
+	rm -rf $(OBJECTS) $(EXECUTABLE)

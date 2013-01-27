@@ -79,7 +79,7 @@ char * LogTime::asCString() {
 
 // Logger
 Logger::Logger() {
- debug("Logger", "Logger initialised!");
+ debug("logger", "Logger initialised!");
 }
 
 void Logger::log(std::string type, std::string title, std::string message) {
