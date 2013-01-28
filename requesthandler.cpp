@@ -25,7 +25,7 @@ RequestHandler::RequestHandler(int connection) {
  log = new Logger("request");
  
  // Initialise request
- InitReqInfo(&request); // TODO
+ InitRequest(&request);
  
  // Handle request and check request type
  if (handle() == true) {
@@ -41,7 +41,23 @@ RequestHandler::RequestHandler(int connection) {
  } else log->warning("", "Couldn't handle request, killing it.");
  
  // Free request data stored in ram
- FreeReqInfo(&request);
+ FreeRequest(&request);
+}
+
+/* InitRequest: Initialises the request data */
+void RequestHandler::InitRequest(struct Request *request) {
+ request->status = 200;
+ request->method = UNSUPPORTED;
+ request->useragent = NULL;
+ request->referer = NULL;
+ request->resource = NULL;
+}
+
+/* FreeRequest: Clear the request data */
+void RequestHandler::FreeRequest(struct Request *request) {
+ if (request->resource) free(request->resource);
+ if (request->useragent) free(request->useragent);
+ if (request->referer) free(request->referer);
 }
 
 /* handle: Handle a request */
@@ -49,7 +65,7 @@ bool RequestHandler::handle() {
  char buffer[MAX_REQ_LINE] = {0};
  int rval;
  fd_set fds;
- struct timeval tv; // TODO
+ struct timeval tv;
  
  // Timeout: 5 seconds
  tv.tv_sec = 5;
@@ -76,8 +92,12 @@ bool RequestHandler::handle() {
    
    // HTTP stuff
    if (buffer[0] == '\0') break; // End of HTTP headers
-   if (Parse_HTTP_Header(buffer, request)) break; // Parse headers, TODO
+   if (parseHTTPHeader(buffer, request)) break; // Parse headers
   }
- } while (request->done != true);
+ } while (request->type != SIMPLE);
  return true; // Successfully processed
+}
+
+int RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
+ return 0; // TODO
 }

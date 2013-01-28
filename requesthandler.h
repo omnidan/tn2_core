@@ -35,14 +35,28 @@
 #include "etc.h"
 #include "logger.h"
 
-struct Request {
+enum RequestMethod { GET, HEAD, UNSUPPORTED };
+enum RequestLevel { SIMPLE, FULL };
+enum RequestType { HTTP, TN };
 
-}; // TODO
+struct Request {
+ enum RequestMethod method;
+ enum RequestLevel level;
+ enum RequestType type;
+ char *referer;
+ char *useragent;
+ char *resource;
+ int status;
+};
 
 class RequestHandler {
 private:
  Request *request;
  Logger *log;
+ void InitRequest(struct Request *);
+ void FreeRequest(struct Request *);
+ void outputHTTP(int, struct Request *);
+ int parseHTTPHeader(char *, struct Request *);
 public:
  RequestHandler(int);
  bool handle();
