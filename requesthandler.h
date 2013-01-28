@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  socket.h
+ *       Filename:  requesthandler.h
  *
- *    Description:  Socket control headers
+ *    Description:  Request handler headers
  *
  *        Version:  1.0
- *        Created:  27/01/13 20:56:23
+ *        Created:  27/01/13 21:48:26
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef SOCKET_H
-#define	SOCKET_H
+#ifndef REQUESTHANDLER_H
+#define	REQUESTHANDLER_H
 
 // Standard headers
 #include <stdlib.h>
@@ -32,17 +32,20 @@
 
 // Internal headers
 #include "config.h"
+#include "etc.h"
 #include "logger.h"
 
-class Socket {
+struct Request {
+
+}; // TODO
+
+class RequestHandler {
 private:
- int listener;
- int connection;
- pid_t pid;
+ Request *request;
  Logger *log;
 public:
- Socket(int);
- int loop();
+ RequestHandler(int);
+ bool handle();
 };
 
-#endif	/* SOCKET_H */
+#endif	/* REQUESTHANDLER_H */

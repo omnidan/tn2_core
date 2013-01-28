@@ -49,7 +49,7 @@ bool RequestHandler::handle() {
  char buffer[MAX_REQ_LINE] = {0};
  int rval;
  fd_set fds;
- struct timeval tv;
+ struct timeval tv; // TODO
  
  // Timeout: 5 seconds
  tv.tv_sec = 5;
@@ -65,8 +65,8 @@ bool RequestHandler::handle() {
   if (rval < 0) log->warning("request_handle", "Couldn't select from request");
   else if (rval == 0) return false; // Timeout, kill request
   else {
-   Readline(conn, buffer, MAX_REQ_LINE - 1); // TODO
-   Trim(buffer); // TODO
+   s_readline(conn, buffer, MAX_REQ_LINE - 1);
+   sttrim(buffer);
    
    if (buffer[0] == '{') {
     // TODO: This is a TN request, parse it as such
