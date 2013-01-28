@@ -1,5 +1,5 @@
 EXECUTABLE=httpapi
-SOURCES=main.cpp logger.cpp socket.cpp
+SOURCES=main.cpp logger.cpp socket.cpp etc.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 CPP=g++
 FLAGS=-ansi -pedantic -Wall

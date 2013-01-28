@@ -18,16 +18,6 @@
 
 #include "logger.h"
 
-std::string stoupper(std::string s) {
-    std::transform(
-        s.begin(),
-        s.end(),
-        s.begin(),
-        std::ptr_fun <int, int> ( std::toupper )
-    );
-    return s;
-}
-
 LogTime::LogTime() {
     t = time(0);
     now = localtime( & t );

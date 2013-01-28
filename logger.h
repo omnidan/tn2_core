@@ -22,15 +22,10 @@
 #include <vector>
 #include <string>
 #include <time.h>
+#include "etc.h"
 #include "config.h"
 #include <cstdio>
 #include <sstream>
-#include <iostream>
-#include <algorithm>
-#include <cctype>
-#include <functional>
-
-std::string stoupper(std::string s); // Prototype
 
 class LogTime {
 private:
