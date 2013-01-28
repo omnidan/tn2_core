@@ -10,8 +10,8 @@
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  Daniel Bugl (), Daniel.Bugl@touchlay.com
- *   Organization:  
+ *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
+ *   Organization:  TouchLay
  *
  * =====================================================================================
  */

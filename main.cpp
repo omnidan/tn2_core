@@ -11,12 +11,10 @@
  *       Compiler:  gcc
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
- *   Organization:  
+ *   Organization:  TouchLay 
  *
  * =====================================================================================
  */
-
-#define SECTION "main"
 
 // Standard headers
 #include <stdlib.h>
@@ -29,58 +27,27 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+// Internal headers
 #include "config.h"
 #include "logger.h"
-
-// TODO: Move to socket.cpp
+#include "socket.h"
+//#include "requesthandler.h"
 
 /* main: Main function */
 int main(int argc, char *argv []) {
- // Initialise variables
- int listener, connection;
- pid_t pid;
- struct sockaddr_in sockaddr;
+ int retval; // Needed later
  
  // Initialise logging system
- Logger *log = new Logger();
+ Logger *log = new Logger("main");
+ log->info("", "HTTPAPI v0.1 booting...");
  
- // Create socket
- if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) log->error(SECTION, "Couldn't create socket.");
- log->debug(SECTION, "Created socket.");
+ // Initialise request handler
+ //RequestHandler *rh = new RequestHandler();
  
- // Initialise sockaddr
- memset(&sockaddr, 0, sizeof(sockaddr));
- sockaddr.sin_port = htons(PORT); // Set port from config
- sockaddr.sin_family = AF_INET;
- sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+ // Initialise socket
+ Socket *socket = new Socket(PORT); // TODO: Add requesthandler as an argument here
+ retval = socket->loop();
  
- // Bind socket
- if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) log->error(SECTION, "Couldn't bind to socket.");
- log->debug(SECTION, "Bound to socket.");
- 
- // Listen to socket
- if (listen(listener, LISTENQ) < 0) log->error(SECTION, "Couldn't listen to socket.");
- log->debug(SECTION, "Listening to socket.");
- 
- // Main loop
- while (true) {
-  // Accept connection if available
-  if ((connection=accept(listener, NULL, NULL)) < 0) log->warning(SECTION, "Couldn't accept connection.");
-  
-  // New connection, fork a new process
-  if ((pid=fork()) == 0) {
-   log->debug("child", "New connection. Forked child process.");
-   if (close(listener) < 0) log->warning("child", "Couldn't close socket.");
-   // TODO: Call request handler here
-   if (close(connection) < 0) log->warning("child", "Couldn't close connection.");
-   log->debug("child", "Connection closed. Killing child process.");
-   exit(EXIT_SUCCESS); // Kill child process
-  }
-  
-  // Cleanup
-  if (close(connection) < 0) log->warning(SECTION, "Couldn't close connection.");
-  waitpid(-1, NULL, WNOHANG);
- }
- 
- return EXIT_FAILURE; // Something bad happened, exit parent
+ // The loop stopped, exit with its return value
+ return retval;
 }

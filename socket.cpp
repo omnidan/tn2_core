@@ -11,61 +11,44 @@
  *       Compiler:  gcc
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
- *   Organization:  
+ *   Organization:  TouchLay
  *
  * =====================================================================================
  */
 
-#define SECTION "socket"
+// Headers
+#include "socket.h"
 
-// Standard headers
-#include <stdlib.h>
-#include <string.h>
-
-// Network headers
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-
-#include "config.h"
-#include "logger.h"
-
-// TODO: Move to socket.cpp
-
-/* main: Main function */
-int main(int argc, char *argv []) {
- // Initialise variables
- int listener, connection;
- pid_t pid;
- struct sockaddr_in sockaddr;
- 
+/* Socket: Constructor */
+Socket::Socket(int port) {
  // Initialise logging system
- Logger *log = new Logger();
+ log = new Logger("socket");
  
  // Create socket
- if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) log->error(SECTION, "Couldn't create socket.");
- log->debug(SECTION, "Created socket.");
+ if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) log->error("", "Couldn't create socket.");
+ log->debug("", "Created socket.");
  
  // Initialise sockaddr
+ struct sockaddr_in sockaddr;
  memset(&sockaddr, 0, sizeof(sockaddr));
- sockaddr.sin_port = htons(PORT); // Set port from config
+ sockaddr.sin_port = htons(port); // Set port
  sockaddr.sin_family = AF_INET;
  sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
- 
+  
  // Bind socket
- if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) log->error(SECTION, "Couldn't bind to socket.");
- log->debug(SECTION, "Bound to socket.");
+ if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) log->error("", "Couldn't bind to socket.");
+ log->debug("", "Bound to socket.");
  
  // Listen to socket
- if (listen(listener, LISTENQ) < 0) log->error(SECTION, "Couldn't listen to socket.");
- log->debug(SECTION, "Listening to socket.");
- 
- // Main loop
+ if (listen(listener, LISTENQ) < 0) log->error("", "Couldn't listen to socket.");
+ log->debug("", "Listening to socket.");
+}
+
+/* loop: Main loop for the socket */
+int Socket::loop() {
  while (true) {
   // Accept connection if available
-  if ((connection=accept(listener, NULL, NULL)) < 0) log->warning(SECTION, "Couldn't accept connection.");
+  if ((connection=accept(listener, NULL, NULL)) < 0) log->warning("", "Couldn't accept connection.");
   
   // New connection, fork a new process
   if ((pid=fork()) == 0) {
@@ -78,7 +61,7 @@ int main(int argc, char *argv []) {
   }
   
   // Cleanup
-  if (close(connection) < 0) log->warning(SECTION, "Couldn't close connection.");
+  if (close(connection) < 0) log->warning("", "Couldn't close connection.");
   waitpid(-1, NULL, WNOHANG);
  }
  

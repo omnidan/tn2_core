@@ -16,11 +16,17 @@
  * =====================================================================================
  */
 
-#include "config.h"
-#include "etc.h"
 #include "logger.h"
-#include <cstdio>
-#include <sstream>
+
+std::string stoupper(std::string s) {
+    std::transform(
+        s.begin(),
+        s.end(),
+        s.begin(),
+        std::ptr_fun <int, int> ( std::toupper )
+    );
+    return s;
+}
 
 LogTime::LogTime() {
     t = time(0);
@@ -78,7 +84,8 @@ char * LogTime::asCString() {
 }
 
 // Logger
-Logger::Logger() {
+Logger::Logger(std::string tag) {
+ stag = tag;
  debug("logger", "Logger initialised!");
 }
 
@@ -87,7 +94,14 @@ void Logger::log(std::string type, std::string title, std::string message) {
     LogTime lt;
     lm.time = lt;
     lm.type = type;
-    lm.title = title;
+    std::stringstream ss;
+    if (title == "") ss << stag;
+    else {
+     ss << stag;
+     ss << "_";
+     ss << title;
+    }
+    lm.title = ss.str();
     lm.message = message;
     addToBuffer(lm);
 }

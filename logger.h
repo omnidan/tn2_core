@@ -1,18 +1,36 @@
-/**
- * This is the header file for the log system.
- * 
- * This file is part of LOSK, the LayOS Kernel.
- * 
- * @author Daniel Bugl <Daniel@touchlay.com>
- * @copyright Copyright (c) 2012 by TouchLay (http://touchlay.com)
+/*
+ * =====================================================================================
+ *
+ *       Filename:  logger.h
+ *
+ *    Description:  Logger class headers
+ *
+ *        Version:  1.0
+ *        Created:  27/01/13 18:21:18
+ *       Revision:  none
+ *       Compiler:  gcc
+ *
+ *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
+ *   Organization:  TouchLay
+ *
+ * =====================================================================================
  */
 
-#ifndef LOGSYSTEM_H
-#define	LOGSYSTEM_H
+#ifndef LOGGER_H
+#define	LOGGER_H
 
 #include <vector>
 #include <string>
 #include <time.h>
+#include "config.h"
+#include <cstdio>
+#include <sstream>
+#include <iostream>
+#include <algorithm>
+#include <cctype>
+#include <functional>
+
+std::string stoupper(std::string s); // Prototype
 
 class LogTime {
 private:
@@ -39,13 +57,14 @@ struct LogMsg {
 
 class Logger {
 private:
+    std::string stag;
     std::vector<LogMsg> buffer;
     std::vector<LogMsg>::iterator it;
     void addToBuffer(LogMsg); // This adds a message to the buffer
     void updateFile(); // This updates the log file
     void printLog(LogMsg);
 public:
-    Logger();
+    Logger(std::string);
     std::string print(LogMsg);
     void log(std::string, std::string, std::string);
     void error(std::string, std::string);
@@ -55,5 +74,4 @@ public:
     std::vector<LogMsg> getBuffer();
 };
 
-#endif	/* LOGSYSTEM_H */
-
+#endif	/* LOGGER_H */
