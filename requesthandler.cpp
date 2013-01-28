@@ -98,6 +98,16 @@ bool RequestHandler::handle() {
  return true; // Successfully processed
 }
 
+int RequestHandler::outputHTTPHeader(int connection, struct Request *request) {
+ char buffer[100];
+ sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
+ s_writeline(connection, buffer, strlen(buffer));
+ s_writeline(connection, "Server: HTTPAPI v0.1\r\n", 22);
+ s_writeline(connection, "Content-Type: application/json\r\n", 32);
+ s_writeline(connection, "\r\n", 2);
+ return 0;
+}
+
 int RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
  return 0; // TODO
 }
