@@ -16,6 +16,12 @@
  * =====================================================================================
  */
 
-#define PORT	8080
-#define LISTENQ	100
+// User settings (change if you want to)
+#define PORT		8080
+
+// System settings/limits (do not change if you don't know what you're doing)
+#define LISTENQ		100
+#define MAX_REQ_LINE	1024
+
+// Debug setting, comment to disable debug messages, uncomment to enable.
 #define DEBUG
