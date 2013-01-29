@@ -27,6 +27,9 @@
 #include <ctype.h>
 #include <string.h>
 
+// For s_getip
+#include <arpa/inet.h>
+
 // Strings
 std::string stoupper(std::string);
 int stoupper(char *);
@@ -36,3 +39,4 @@ void urlize(char *);
 // Sockets
 ssize_t s_readline(int, void *, size_t);
 ssize_t s_writeline(int, void const *, size_t);
+void *s_getip(const struct sockaddr *);

@@ -55,12 +55,13 @@ private:
  Request request;
  Logger *log;
  int connection;
+ char *clientip;
  void InitRequest(Request *);
  void FreeRequest(Request *);
  bool outputHTTPHeader(int, Request *);
  bool parseHTTPHeader(char *, Request *);
 public:
- RequestHandler(int);
+ RequestHandler(int, char*);
  bool handle();
 };
 

@@ -20,10 +20,11 @@
 #include "requesthandler.h"
 
 /* RequestHandler: Constructor */
-RequestHandler::RequestHandler(int iconnection) {
+RequestHandler::RequestHandler(int iconnection, char *cip) {
  // Initialise logging system
  log = new Logger("request");
- 
+
+ clientip = cip;
  connection = iconnection;
  
  // Initialise request
@@ -33,16 +34,20 @@ RequestHandler::RequestHandler(int iconnection) {
  if (handle() == true) {
   log->debug("", "handle() returned true, continuing!");
   if (request.type == HTTP) {
-   log->debug("", "This is an HTTP request.");
+   log->debug("http", "This is an HTTP request.");
    if (request.status == 200) {
-    log->debug("", "Status 200, returning result.");
+    log->debug("http", "Status 200, returning result.");
     //Parse_JSON(&request); // TODO
     outputHTTPHeader(connection, &request);
+    s_writeline(connection, "{}", 2);
+    log->debug("http", "Answered to request with HTTP.");
     //Return_Resource(connection, resource, &request); // TODO, response
    } //else Return_Error_Msg(conn, &request); // TODO
   } else if (request.type == TN) {
-   log->debug("", "This is a TN request.");
+   log->debug("tn", "This is a TN request.");
    //Parse_JSON(request); // TODO
+   s_writeline(connection, "{}", 2);
+   log->debug("tn", "Answered to request with TN.");
   } else log->warning("", "Unknown request type, killing request.");
  } else log->warning("", "Couldn't handle request, killing it.");
  
@@ -90,12 +95,13 @@ bool RequestHandler::handle() {
   else if (rval == 0) return false; // Timeout, kill request
   else {
    s_readline(connection, buffer, MAX_REQ_LINE - 1);
-   sttrim(buffer);
    
    if (buffer[0] == '{') {
     request.type = TN;
+    return true;
    } else {
     request.type = HTTP;
+    sttrim(buffer);
    }
    
    // HTTP stuff
@@ -115,9 +121,7 @@ bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
  s_writeline(connection, "\r\n", 2);
  
- s_writeline(connection, "{}", 2);
-
- log->debug("", "Returned result!");
+ log->debug("http", "HTTP headers forged and sent.");
  
  return true;
 }

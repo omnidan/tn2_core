@@ -108,3 +108,8 @@ ssize_t s_writeline(int sockd, void const *vptr, size_t n) {
  
  return n;
 }
+
+void *s_getip(const struct sockaddr *sa) {
+ if (sa->sa_family == AF_INET) return &(((struct sockaddr_in*)sa)->sin_addr);
+ else return &(((struct sockaddr_in6*)sa)->sin6_addr);
+}

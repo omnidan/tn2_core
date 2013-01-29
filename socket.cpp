@@ -47,14 +47,26 @@ Socket::Socket(int port) {
 /* loop: Main loop for the socket */
 int Socket::loop() {
  while (true) {
+  // Initialise client struct
+  sockaddr_in client;
+  client.sin_family = AF_INET;
+  socklen_t clen = sizeof(client);
+  
   // Accept connection if available
-  if ((connection=accept(listener, NULL, NULL)) < 0) log->warning("", "Couldn't accept connection.");
+  if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) log->warning("", "Couldn't accept connection.");
   
   // New connection, fork a new process
   if ((pid=fork()) == 0) {
    log->debug("child", "New connection. Forked child process.");
+   char *cip;
+   if ((cip = inet_ntoa(client.sin_addr)) < 0) log->error("child", "Failed to get peer address.");
+   /* DEBUG */
+   char buffer[64];
+   sprintf(buffer, "Peer address: %s", cip);
+   log->debug("child", buffer);
+   /* /DEBUG */
    if (close(listener) < 0) log->warning("child", "Couldn't close socket.");
-   RequestHandler *rh = new RequestHandler(connection); // Initialise request handler
+   new RequestHandler(connection, cip); // Initialise request handler
    if (close(connection) < 0) log->warning("child", "Couldn't close connection.");
    log->debug("child", "Connection closed. Killing child process.");
    exit(EXIT_SUCCESS); // Kill child process
