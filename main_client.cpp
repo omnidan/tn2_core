@@ -85,8 +85,8 @@ int main(int argc, char *argv []) {
  benchmark0 = timestamp();
  test1(connection);
  benchmark1 = timestamp();
- secs = (benchmark1 - benchmark0) / 1000000.0L;
- printf("[+] Test 1 (HTTP) took %0.5f seconds.\n", secs);
+ secs = (benchmark1 - benchmark0) / 1000.0L;
+ printf("[+] Test 1 (HTTP) took %0.5f milliseconds.\n", secs);
  
  close(connection);
  if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
@@ -94,8 +94,8 @@ int main(int argc, char *argv []) {
  benchmark0 = timestamp();
  test2(connection);
  benchmark1 = timestamp();
- secs = (benchmark1 - benchmark0) / 1000000.0L;
- printf("[+] Test 2 (TN)   took %0.5f seconds.\n", secs);
+ secs = (benchmark1 - benchmark0) / 1000.0L;
+ printf("[+] Test 2 (TN)   took %0.5f milliseconds.\n", secs);
 
  close(connection);
  return 0;
