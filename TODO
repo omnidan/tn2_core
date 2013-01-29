@@ -1,4 +1,3 @@
- * Replace Logger with something more efficient (printf + compiler defined function)
  * Make everything more C++-like (at the moment, it's a lot C-like)
  * Read through code and improve performance, restructure if needed
  * Implement the JSON parser
