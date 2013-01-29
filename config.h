@@ -28,6 +28,6 @@
 #define VERSION		"TNREQ v0.1"
 
 // Debug setting, comment to disable debug messages, uncomment to enable.
-#define DEBUG
+//#define DEBUG
 
 #endif /* CONFIG_H */
