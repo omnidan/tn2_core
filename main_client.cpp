@@ -41,27 +41,43 @@ void test1(int connection) {
  s_writeline(connection, "HTTP/1.1 200 OK\r\n", 17);
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
  s_writeline(connection, "\r\n", 2);
- s_writeline(connection, TESTMSG, 2);
+ s_writeline(connection, TESTMSG, sizeof(TESTMSG));
 }
 
 void test2(int connection) {
- s_writeline(connection, TESTMSG, 2);
+ s_writeline(connection, TESTMSG, sizeof(TESTMSG));
+}
+
+int establishConnection(char *serverip, int port) {
+ int connection = socket(AF_INET, SOCK_STREAM, 0);
+ struct sockaddr_in servAddr;
+ struct hostent *server;
+ 
+ server = gethostbyname(serverip);
+ 
+ bzero((char *)&servAddr, sizeof(servAddr));
+ servAddr.sin_family = AF_INET;
+ bcopy((char *)server->h_addr, (char *)&servAddr.sin_addr.s_addr, server->h_length);
+ servAddr.sin_port = htons(PORT);
+ 
+ if (connect(connection, (struct sockaddr*)&servAddr, sizeof(struct sockaddr)) < 0) {
+  printf("[-] Connection to %s failed.\n", serverip);
+  return -1;
+ }
+ return connection;
 }
 
 int main(int argc, char *argv []) {
- int connection = socket(AF_INET, SOCK_STREAM, 0);
- sockaddr_in servAddr;
- servAddr.sin_family = AF_INET;
- servAddr.sin_port = PORT;
- //if (argc < 2) {
- // printf("[~] No IP address as argument provided, assuming 127.0.0.1");
- // servAddr.sin_addr.s_addr = inet_addr(argv[1]);
- //} else 
- servAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+ char *serverip;
+ int connection;
+ if (argc < 2) {
+  printf("[~] No IP address as argument provided, assuming 127.0.0.1\n");
+  serverip = (char *)"127.0.0.1";
+ } else serverip = (char *)argv[1];
  
- connect(connection, (struct sockaddr*)&servAddr, sizeof(struct sockaddr));
+ if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
- printf("[~] Connected... Starting benchmarks.");
+ printf("[~] Connected to %s... Starting benchmarks.\n", serverip);
  
  timestamp_t benchmark0, benchmark1;
  double secs;
@@ -70,14 +86,18 @@ int main(int argc, char *argv []) {
  test1(connection);
  benchmark1 = timestamp();
  secs = (benchmark1 - benchmark0) / 1000000.0L;
- printf("[+] Test 1 (HTTP) took %0.5f seconds.", secs);
+ printf("[+] Test 1 (HTTP) took %0.5f seconds.\n", secs);
+ 
+ close(connection);
+ if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
  benchmark0 = timestamp();
  test2(connection);
  benchmark1 = timestamp();
  secs = (benchmark1 - benchmark0) / 1000000.0L;
- printf("[+] Test 2 (TN)   took %0.5f seconds.", secs);
- 
+ printf("[+] Test 2 (TN)   took %0.5f seconds.\n", secs);
+
+ close(connection);
  return 0;
 }
 
