@@ -1,8 +1,8 @@
-EXECUTABLE=tnreq
-EXECUTABLE_CLIENT=apicli
-SOURCES=main.cpp socket.cpp etc.cpp requesthandler.cpp
+EXECUTABLE=bin/tnreq
+EXECUTABLE_CLIENT=bin/apicli
+SOURCES=src/main.cpp src/socket.cpp src/etc.cpp src/requesthandler.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-SOURCES_CLIENT=main_client.cpp etc.cpp
+SOURCES_CLIENT=src/main_client.cpp src/etc.cpp
 OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)
 CPP=g++
 FLAGS=-ansi -pedantic -Wall

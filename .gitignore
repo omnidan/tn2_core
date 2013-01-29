@@ -1,4 +1,2 @@
-tnreq
-apicli
-*.o
-*.swp
+bin/tnreq
+bin/apicli
