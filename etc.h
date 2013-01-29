@@ -35,4 +35,4 @@ void urlize(char *);
 
 // Sockets
 ssize_t s_readline(int, void *, size_t);
-ssize_t s_writeline(int, const void *, size_t);
+ssize_t s_writeline(int, void const *, size_t);

@@ -33,6 +33,7 @@
 // Internal headers
 #include "config.h"
 #include "logger.h"
+#include "requesthandler.h"
 
 class Socket {
 private:

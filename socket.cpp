@@ -54,7 +54,7 @@ int Socket::loop() {
   if ((pid=fork()) == 0) {
    log->debug("child", "New connection. Forked child process.");
    if (close(listener) < 0) log->warning("child", "Couldn't close socket.");
-   // TODO: Call request handler here
+   RequestHandler *rh = new RequestHandler(connection); // Initialise request handler
    if (close(connection) < 0) log->warning("child", "Couldn't close connection.");
    log->debug("child", "Connection closed. Killing child process.");
    exit(EXIT_SUCCESS); // Kill child process

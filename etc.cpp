@@ -65,11 +65,11 @@ void urlize(char *buffer) {
 }
 
 // Read line from socket
-ssize_t s_readline(int sockd, char *vptr, size_t maxlen) {
+ssize_t s_readline(int sockd, void *vptr, size_t maxlen) {
  ssize_t n, rc;
  char c, *buffer;
 
- buffer = vptr;
+ buffer = (char *)vptr;
  
  for (n=1; (unsigned)n<maxlen; n++) {
   if ((rc=read(sockd, &c, 1)) == 1) {
@@ -89,12 +89,12 @@ ssize_t s_readline(int sockd, char *vptr, size_t maxlen) {
 }
 
 // Write line to socket
-ssize_t s_writeline(int sockd, const char *vptr, size_t n) {
+ssize_t s_writeline(int sockd, void const *vptr, size_t n) {
  size_t nleft;
  ssize_t nwritten;
  const char *buffer;
  
- buffer = vptr;
+ buffer = (const char *)vptr;
  nleft = n;
  
  while (nleft > 0) {

@@ -20,23 +20,29 @@
 #include "requesthandler.h"
 
 /* RequestHandler: Constructor */
-RequestHandler::RequestHandler(int connection) {
+RequestHandler::RequestHandler(int iconnection) {
  // Initialise logging system
  log = new Logger("request");
+ 
+ connection = iconnection;
  
  // Initialise request
  InitRequest(&request);
  
  // Handle request and check request type
  if (handle() == true) {
-  if (request->type == REQ_TYPE_HTTP) {
-   if (request->status == 200) {
-    Parse_JSON(&request); // TODO
-    OutputHTTPHeader(connection, &request);
-    Return_Resource(connection, resource, &request); // TODO, response
-   } else Return_Error_Msg(conn, &request); // TODO
-  } else if (request->type == REQ_TYPE_TN) {
-   Parse_JSON(request); // TODO
+  log->debug("", "handle() returned true, continuing!");
+  if (request.type == HTTP) {
+   log->debug("", "This is an HTTP request.");
+   if (request.status == 200) {
+    log->debug("", "Status 200, returning result.");
+    //Parse_JSON(&request); // TODO
+    outputHTTPHeader(connection, &request);
+    //Return_Resource(connection, resource, &request); // TODO, response
+   } //else Return_Error_Msg(conn, &request); // TODO
+  } else if (request.type == TN) {
+   log->debug("", "This is a TN request.");
+   //Parse_JSON(request); // TODO
   } else log->warning("", "Unknown request type, killing request.");
  } else log->warning("", "Couldn't handle request, killing it.");
  
@@ -45,19 +51,21 @@ RequestHandler::RequestHandler(int connection) {
 }
 
 /* InitRequest: Initialises the request data */
-void RequestHandler::InitRequest(struct Request *request) {
+void RequestHandler::InitRequest(Request *request) {
  request->status = 200;
  request->method = UNSUPPORTED;
  request->useragent = NULL;
  request->referer = NULL;
  request->resource = NULL;
+ log->debug("", "Initialised request.");
 }
 
 /* FreeRequest: Clear the request data */
-void RequestHandler::FreeRequest(struct Request *request) {
+void RequestHandler::FreeRequest(Request *request) {
  if (request->resource) free(request->resource);
  if (request->useragent) free(request->useragent);
  if (request->referer) free(request->referer);
+ log->debug("", "Free'd request.");
 }
 
 /* handle: Handle a request */
@@ -74,41 +82,47 @@ bool RequestHandler::handle() {
  do {
   // Reset FD
   FD_ZERO(&fds);
-  FD_SET(conn, &fds);
+  FD_SET(connection, &fds);
   
-  rval = select(conn+1, &fds, NULL, NULL, &tv); // Select from request
+  rval = select(connection+1, &fds, NULL, NULL, &tv); // Select from request
   
   if (rval < 0) log->warning("request_handle", "Couldn't select from request");
   else if (rval == 0) return false; // Timeout, kill request
   else {
-   s_readline(conn, buffer, MAX_REQ_LINE - 1);
+   s_readline(connection, buffer, MAX_REQ_LINE - 1);
    sttrim(buffer);
    
    if (buffer[0] == '{') {
-    // TODO: This is a TN request, parse it as such
+    request.type = TN;
    } else {
-    // TODO: This is an HTTP request, parse it as such
+    request.type = HTTP;
    }
    
    // HTTP stuff
    if (buffer[0] == '\0') break; // End of HTTP headers
-   if (parseHTTPHeader(buffer, request)) break; // Parse headers
+   if (parseHTTPHeader(buffer, &request)) break; // Parse headers
   }
- } while (request->type != SIMPLE);
+ } while (request.level != SIMPLE);
  return true; // Successfully processed
 }
 
-int RequestHandler::outputHTTPHeader(int connection, struct Request *request) {
+bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
  char buffer[100];
+ 
  sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
  s_writeline(connection, buffer, strlen(buffer));
  s_writeline(connection, "Server: HTTPAPI v0.1\r\n", 22);
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
  s_writeline(connection, "\r\n", 2);
- return 0;
+ 
+ s_writeline(connection, "{}", 2);
+
+ log->debug("", "Returned result!");
+ 
+ return true;
 }
 
-bool RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
+bool RequestHandler::parseHTTPHeader(char *buffer, Request *request) {
  static bool first_line = true;
  char *temp;
  char *endptr;
@@ -135,7 +149,7 @@ bool RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
    return false;
   }
   
-  request->resource = calloc(len + 1, sizeof(char));
+  request->resource = (char *)calloc(len + 1, sizeof(char));
   strncpy(request->resource, buffer, len);
   
   if (strstr(buffer, "HTTP/")) request->level = FULL;
@@ -146,13 +160,13 @@ bool RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
  }
  
  // More headers aside from the request line
- endptr = strchr(buffer, ":");
+ endptr = strchr(buffer, 58); // 58 is a : character
  if (endptr == NULL) {
   request->status = 400;
   return false;
  }
  
- temp = calloc((endptr - buffer) + 1, sizeof(char));
+ temp = (char *)calloc((endptr - buffer) + 1, sizeof(char));
  strncpy(temp, buffer, (endptr - buffer));
  stoupper(temp);
  
@@ -161,25 +175,13 @@ bool RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
  if (*buffer == '\0') return true;
  
  if (!strcmp(temp, "USER-AGENT")) {
-  request->useragent = malloc(strlen(buffer) + 1);
+  request->useragent = (char *)malloc(strlen(buffer) + 1);
   strcpy(request->useragent, buffer);
  } else if (!strcmp(temp, "REFERER")) {
-  request->referer = malloc(strlen(buffer) + 1);
+  request->referer = (char *)malloc(strlen(buffer) + 1);
   strcpy(request->referer, buffer);
  }
  
  free(temp);
- return true;
-}
-
-bool OutputHTTPHeader(int connection, struct Request *request) {
- char buffer[100];
- 
- sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
- s_writeline(connection, buffer, strlen(buffer));
- s_writeline(connection, "Server: HTTPAPI v0.1\r\n", 22);
- s_writeline(connection, "Content-Type: application/json\r\n", 32);
- s_writeline(connection, "\r\n", 2);
- 
  return true;
 }

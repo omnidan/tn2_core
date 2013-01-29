@@ -21,6 +21,7 @@
 
 // Standard headers
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 // Network headers
@@ -51,12 +52,13 @@ struct Request {
 
 class RequestHandler {
 private:
- Request *request;
+ Request request;
  Logger *log;
- void InitRequest(struct Request *);
- void FreeRequest(struct Request *);
- bool outputHTTPHeader(int, struct Request *);
- bool parseHTTPHeader(char *, struct Request *);
+ int connection;
+ void InitRequest(Request *);
+ void FreeRequest(Request *);
+ bool outputHTTPHeader(int, Request *);
+ bool parseHTTPHeader(char *, Request *);
 public:
  RequestHandler(int);
  bool handle();

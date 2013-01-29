@@ -31,7 +31,6 @@
 #include "config.h"
 #include "logger.h"
 #include "socket.h"
-//#include "requesthandler.h"
 
 /* main: Main function */
 int main(int argc, char *argv []) {
@@ -40,9 +39,6 @@ int main(int argc, char *argv []) {
  // Initialise logging system
  Logger *log = new Logger("main");
  log->info("", "HTTPAPI v0.1 booting...");
- 
- // Initialise request handler
- //RequestHandler *rh = new RequestHandler();
  
  // Initialise socket
  Socket *socket = new Socket(PORT); // TODO: Add requesthandler as an argument here
