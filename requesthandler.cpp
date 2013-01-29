@@ -21,9 +21,6 @@
 
 /* RequestHandler: Constructor */
 RequestHandler::RequestHandler(int iconnection, char *cip) {
- // Initialise logging system
- log = new Logger("request");
-
  clientip = cip;
  connection = iconnection;
  
@@ -33,35 +30,35 @@ RequestHandler::RequestHandler(int iconnection, char *cip) {
  // Handle request and check request type
  if (handle() == true) {
   #ifdef DEBUG
-  log->debug("", "handle() returned true, continuing!");
+  printf("[DEBUG] [request] handle() returned true, continuing!\n");
   #endif
   if (request.type == HTTP) {
    #ifdef DEBUG
-   log->debug("http", "This is an HTTP request.");
+   printf("[DEBUG] [request_http] This is an HTTP request.\n");
    #endif
    if (request.status == 200) {
     #ifdef DEBUG
-    log->debug("http", "Status 200, returning result.");
+    printf("[DEBUG] [request_http] Status 200, returning result.\n");
     #endif
     //Parse_JSON(&request); // TODO
     outputHTTPHeader(connection, &request);
     s_writeline(connection, "{}", 2);
     #ifdef DEBUG
-    log->debug("http", "Answered to request with HTTP.");
+    printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
     #endif
     //Return_Resource(connection, resource, &request); // TODO, response
    } //else Return_Error_Msg(conn, &request); // TODO
   } else if (request.type == TN) {
    #ifdef DEBUG
-   log->debug("tn", "This is a TN request.");
+   printf("[DEBUG] [request_tn] This is a TN request.\n");
    #endif
    //Parse_JSON(request); // TODO
    s_writeline(connection, "{}", 2);
    #ifdef DEBUG
-   log->debug("tn", "Answered to request with TN.");
+   printf("[DEBUG] [request_tn] Answered to request with TN.\n");
    #endif
-  } else log->warning("", "Unknown request type, killing request.");
- } else log->warning("", "Couldn't handle request, killing it.");
+  } else printf("[WARN] [request] Unknown request type, killing request.\n");
+ } else printf("[WARN] [request] Couldn't handle request, killing it.\n");
  
  // Free request data stored in ram
  FreeRequest(&request);
@@ -75,7 +72,7 @@ void RequestHandler::InitRequest(Request *request) {
  request->referer = NULL;
  request->resource = NULL;
  #ifdef DEBUG
- log->debug("", "Initialised request.");
+ printf("[DEBUG] [request] Initialised request.\n");
  #endif
 }
 
@@ -85,7 +82,7 @@ void RequestHandler::FreeRequest(Request *request) {
  if (request->useragent) free(request->useragent);
  if (request->referer) free(request->referer);
  #ifdef DEBUG
- log->debug("", "Free'd request.");
+ printf("[DEBUG] [request] Free'd request.\n");
  #endif
 }
 
@@ -107,7 +104,7 @@ bool RequestHandler::handle() {
   
   rval = select(connection+1, &fds, NULL, NULL, &tv); // Select from request
   
-  if (rval < 0) log->warning("request_handle", "Couldn't select from request");
+  if (rval < 0) printf("[WARN ] [request_handle] Couldn't select from request.\n");
   else if (rval == 0) return false; // Timeout, kill request
   else {
    s_readline(connection, buffer, MAX_REQ_LINE - 1);
@@ -138,7 +135,7 @@ bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
  s_writeline(connection, "\r\n", 2);
  
  #ifdef DEBUG
- log->debug("http", "HTTP headers forged and sent.");
+ printf("[DEBUG] [request_http] HTTP headers forged and sent.\n");
  #endif
  
  return true;

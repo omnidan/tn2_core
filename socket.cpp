@@ -21,13 +21,13 @@
 
 /* Socket: Constructor */
 Socket::Socket(int port) {
- // Initialise logging system
- log = new Logger("socket");
- 
  // Create socket
- if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) log->error("", "Couldn't create socket.");
+ if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+  printf("[ERROR] [socket] Couldn't create socket.\n");
+  exit(EXIT_FAILURE);
+ }
  #ifdef DEBUG
- log->debug("", "Created socket.");
+ printf("[DEBUG] [socket] Created socket.\n");
  #endif
  
  // Initialise sockaddr
@@ -38,15 +38,21 @@ Socket::Socket(int port) {
  sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
   
  // Bind socket
- if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) log->error("", "Couldn't bind to socket.");
+ if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) {
+  printf("[ERROR] [socket] Couldn't bind to socket.\n");
+  exit(EXIT_FAILURE);
+ }
  #ifdef DEBUG
- log->debug("", "Bound to socket.");
+ printf("[DEBUG] [socket] Bound to socket.\n");
  #endif
  
  // Listen to socket
- if (listen(listener, LISTENQ) < 0) log->error("", "Couldn't listen to socket.");
+ if (listen(listener, LISTENQ) < 0) {
+  printf("[ERROR] [socket] Couldn't listen to socket.\n");
+  exit(EXIT_FAILURE);
+ }
  #ifdef DEBUG
- log->debug("", "Listening to socket.");
+ printf("[DEBUG] [socket] Listening to socket.\n");
  #endif
 }
 
@@ -59,31 +65,32 @@ int Socket::loop() {
   socklen_t clen = sizeof(client);
   
   // Accept connection if available
-  if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) log->warning("", "Couldn't accept connection.");
+  if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
   
   // New connection, fork a new process
   if ((pid=fork()) == 0) {
    #ifdef DEBUG
-   log->debug("child", "New connection. Forked child process.");
+   printf("[DEBUG] [child] New connection. Forked child process.\n");
    #endif
    char *cip;
-   if ((cip = inet_ntoa(client.sin_addr)) < 0) log->error("child", "Failed to get peer address.");
+   if ((cip = inet_ntoa(client.sin_addr)) < 0) {
+    printf("[ERROR] [child] Failed to get peer address.\n");
+    exit(EXIT_FAILURE);              
+   } 
    #ifdef DEBUG
-   char buffer[64];
-   sprintf(buffer, "Peer address: %s", cip);
-   log->debug("child", buffer);
+   printf("[DEBUG] [child] Peer address: %s\n", cip);
    #endif
-   if (close(listener) < 0) log->warning("child", "Couldn't close socket.");
+   if (close(listener) < 0) printf("[WARN] [child] Couldn't close socket.\n");
    new RequestHandler(connection, cip); // Initialise request handler
-   if (close(connection) < 0) log->warning("child", "Couldn't close connection.");
+   if (close(connection) < 0) printf("[WARN] [child] Couldn't close connection.\n");
    #ifdef DEBUG
-   log->debug("child", "Connection closed. Killing child process.");
+   printf("[DEBUG] [child] Connection closed. Killing child process.\n");
    #endif
    exit(EXIT_SUCCESS); // Kill child process
   }
   
   // Cleanup
-  if (close(connection) < 0) log->warning("", "Couldn't close connection.");
+  if (close(connection) < 0) printf("[WARN] [socket] Couldn't close connection.\n");
   waitpid(-1, NULL, WNOHANG);
  }
  

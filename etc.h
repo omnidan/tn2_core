@@ -5,10 +5,10 @@
  *
  *    Description:  Additional functions - headers
  *
- *        Version:  1.0
+ *        Version:  0.1
  *        Created:  28/01/13 22:28:24
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
  *   Organization:  TouchLay

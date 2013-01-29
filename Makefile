@@ -1,6 +1,6 @@
-EXECUTABLE=httpapi
+EXECUTABLE=tnreq
 EXECUTABLE_CLIENT=apicli
-SOURCES=main.cpp logger.cpp socket.cpp etc.cpp requesthandler.cpp
+SOURCES=main.cpp socket.cpp etc.cpp requesthandler.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 SOURCES_CLIENT=main_client.cpp etc.cpp
 OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)

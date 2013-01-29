@@ -5,10 +5,10 @@
  *
  *    Description:  Main entry for the http request api
  *
- *        Version:  1.0
+ *        Version:  0.1
  *        Created:  27/01/13 18:18:34
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
  *   Organization:  TouchLay 
@@ -29,19 +29,19 @@
 
 // Internal headers
 #include "config.h"
-#include "logger.h"
 #include "socket.h"
 
 /* main: Main function */
 int main(int argc, char *argv []) {
  int retval; // Needed later
  
- // Initialise logging system
- Logger *log = new Logger("main");
- log->info("", "HTTPAPI v0.1 booting...");
+ // Print info message
+ printf("[INFO ] [main] %s booting...\n", VERSION);
+ printf("[INFO ] [main]  Copyright (c) 2013 Daniel Bugl <daniel.bugl@touchlay.com>\n");
+ printf("[INFO ] [main]  Copyright (c) 2013 TouchLay <support@touchlay.com>\n");
  
  // Initialise socket
- Socket *socket = new Socket(PORT); // TODO: Add requesthandler as an argument here
+ Socket *socket = new Socket(PORT);
  retval = socket->loop();
  
  // The loop stopped, exit with its return value

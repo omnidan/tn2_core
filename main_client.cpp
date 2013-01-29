@@ -5,10 +5,10 @@
  *
  *    Description:  Main file for the client
  *
- *        Version:  1.0
+ *        Version:  0.1
  *        Created:  29/01/13 20:47:42
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
  *   Organization:  TouchLay

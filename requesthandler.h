@@ -5,10 +5,10 @@
  *
  *    Description:  Request handler headers
  *
- *        Version:  1.0
+ *        Version:  0.1
  *        Created:  27/01/13 21:48:26
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
  *   Organization:  TouchLay
@@ -35,7 +35,6 @@
 
 // Internal headers
 #include "etc.h"
-#include "logger.h"
 
 enum RequestMethod { GET, HEAD, UNSUPPORTED };
 enum RequestLevel { SIMPLE, FULL };
@@ -54,7 +53,6 @@ struct Request {
 class RequestHandler {
 private:
  Request request;
- Logger *log;
  int connection;
  char *clientip;
  void InitRequest(Request *);
