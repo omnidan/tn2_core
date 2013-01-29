@@ -55,8 +55,8 @@ private:
  Logger *log;
  void InitRequest(struct Request *);
  void FreeRequest(struct Request *);
- void outputHTTPHeader(int, struct Request *);
- int parseHTTPHeader(char *, struct Request *);
+ bool outputHTTPHeader(int, struct Request *);
+ bool parseHTTPHeader(char *, struct Request *);
 public:
  RequestHandler(int);
  bool handle();

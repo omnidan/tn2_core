@@ -32,7 +32,7 @@ RequestHandler::RequestHandler(int connection) {
   if (request->type == REQ_TYPE_HTTP) {
    if (request->status == 200) {
     Parse_JSON(&request); // TODO
-    Output_HTTP_Headers(connection, &request); // TODO, response
+    OutputHTTPHeader(connection, &request);
     Return_Resource(connection, resource, &request); // TODO, response
    } else Return_Error_Msg(conn, &request); // TODO
   } else if (request->type == REQ_TYPE_TN) {
@@ -108,6 +108,78 @@ int RequestHandler::outputHTTPHeader(int connection, struct Request *request) {
  return 0;
 }
 
-int RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
- return 0; // TODO
+bool RequestHandler::parseHTTPHeader(char *buffer, struct Request *request) {
+ static bool first_line = true;
+ char *temp;
+ char *endptr;
+ int len;
+ if (first_line == true) {
+  if (!strncmp(buffer, "GET ", 4)) {
+   request->method = GET;
+   buffer += 4;
+  } else if (!strncmp(buffer, "HEAD ", 5)) {
+   request->method = HEAD;
+   buffer += 5;
+  } else {
+   request->method = UNSUPPORTED;
+   request->status = 501;
+   return false;
+  }
+  while (*buffer && isspace(*buffer)) buffer++; // Skip the start
+  endptr = strchr(buffer, ' ');
+  if (endptr == NULL) len = strlen(buffer);
+  else len = endptr - buffer;
+  
+  if (len == 0) {
+   request->status = 400;
+   return false;
+  }
+  
+  request->resource = calloc(len + 1, sizeof(char));
+  strncpy(request->resource, buffer, len);
+  
+  if (strstr(buffer, "HTTP/")) request->level = FULL;
+  else request->level = SIMPLE;
+  
+  first_line = 0;
+  return true;
+ }
+ 
+ // More headers aside from the request line
+ endptr = strchr(buffer, ":");
+ if (endptr == NULL) {
+  request->status = 400;
+  return false;
+ }
+ 
+ temp = calloc((endptr - buffer) + 1, sizeof(char));
+ strncpy(temp, buffer, (endptr - buffer));
+ stoupper(temp);
+ 
+ buffer = endptr + 1;
+ while (*buffer && isspace(*buffer)) ++buffer;
+ if (*buffer == '\0') return true;
+ 
+ if (!strcmp(temp, "USER-AGENT")) {
+  request->useragent = malloc(strlen(buffer) + 1);
+  strcpy(request->useragent, buffer);
+ } else if (!strcmp(temp, "REFERER")) {
+  request->referer = malloc(strlen(buffer) + 1);
+  strcpy(request->referer, buffer);
+ }
+ 
+ free(temp);
+ return true;
+}
+
+bool OutputHTTPHeader(int connection, struct Request *request) {
+ char buffer[100];
+ 
+ sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
+ s_writeline(connection, buffer, strlen(buffer));
+ s_writeline(connection, "Server: HTTPAPI v0.1\r\n", 22);
+ s_writeline(connection, "Content-Type: application/json\r\n", 32);
+ s_writeline(connection, "\r\n", 2);
+ 
+ return true;
 }
