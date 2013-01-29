@@ -19,6 +19,8 @@
 #ifndef SOCKET_H
 #define	SOCKET_H
 
+#include "config.h"
+
 // Standard headers
 #include <stdlib.h>
 #include <string.h>
@@ -31,7 +33,6 @@
 #include <unistd.h>
 
 // Internal headers
-#include "config.h"
 #include "logger.h"
 #include "requesthandler.h"
 
@@ -46,4 +47,4 @@ public:
  int loop();
 };
 
-#endif	/* SOCKET_H */
+#endif /* SOCKET_H */

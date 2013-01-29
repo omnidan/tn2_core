@@ -26,7 +26,9 @@ Socket::Socket(int port) {
  
  // Create socket
  if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) log->error("", "Couldn't create socket.");
+ #ifdef DEBUG
  log->debug("", "Created socket.");
+ #endif
  
  // Initialise sockaddr
  struct sockaddr_in sockaddr;
@@ -37,11 +39,15 @@ Socket::Socket(int port) {
   
  // Bind socket
  if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) log->error("", "Couldn't bind to socket.");
+ #ifdef DEBUG
  log->debug("", "Bound to socket.");
+ #endif
  
  // Listen to socket
  if (listen(listener, LISTENQ) < 0) log->error("", "Couldn't listen to socket.");
+ #ifdef DEBUG
  log->debug("", "Listening to socket.");
+ #endif
 }
 
 /* loop: Main loop for the socket */
@@ -57,18 +63,22 @@ int Socket::loop() {
   
   // New connection, fork a new process
   if ((pid=fork()) == 0) {
+   #ifdef DEBUG
    log->debug("child", "New connection. Forked child process.");
+   #endif
    char *cip;
    if ((cip = inet_ntoa(client.sin_addr)) < 0) log->error("child", "Failed to get peer address.");
-   /* DEBUG */
+   #ifdef DEBUG
    char buffer[64];
    sprintf(buffer, "Peer address: %s", cip);
    log->debug("child", buffer);
-   /* /DEBUG */
+   #endif
    if (close(listener) < 0) log->warning("child", "Couldn't close socket.");
    new RequestHandler(connection, cip); // Initialise request handler
    if (close(connection) < 0) log->warning("child", "Couldn't close connection.");
+   #ifdef DEBUG
    log->debug("child", "Connection closed. Killing child process.");
+   #endif
    exit(EXIT_SUCCESS); // Kill child process
   }
   

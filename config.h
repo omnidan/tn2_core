@@ -16,6 +16,9 @@
  * =====================================================================================
  */
 
+#ifndef CONFIG_H
+#define CONFIG_H
+
 // User settings (change if you want to)
 #define PORT		8080
 
@@ -25,3 +28,5 @@
 
 // Debug setting, comment to disable debug messages, uncomment to enable.
 #define DEBUG
+
+#endif /* CONFIG_H */

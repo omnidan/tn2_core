@@ -19,11 +19,12 @@
 #ifndef LOGGER_H
 #define	LOGGER_H
 
+#include "config.h"
+
 #include <vector>
 #include <string>
 #include <time.h>
 #include "etc.h"
-#include "config.h"
 #include <cstdio>
 #include <sstream>
 
@@ -69,4 +70,4 @@ public:
     std::vector<LogMsg> getBuffer();
 };
 
-#endif	/* LOGGER_H */
+#endif /* LOGGER_H */

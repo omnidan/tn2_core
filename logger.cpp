@@ -76,7 +76,9 @@ char * LogTime::asCString() {
 // Logger
 Logger::Logger(std::string tag) {
  stag = tag;
+ #ifdef DEBUG
  debug("logger", "Logger initialised!");
+ #endif
 }
 
 void Logger::log(std::string type, std::string title, std::string message) {

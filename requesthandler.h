@@ -19,6 +19,8 @@
 #ifndef REQUESTHANDLER_H
 #define	REQUESTHANDLER_H
 
+#include "config.h"
+
 // Standard headers
 #include <stdlib.h>
 #include <stdio.h>
@@ -32,7 +34,6 @@
 #include <unistd.h>
 
 // Internal headers
-#include "config.h"
 #include "etc.h"
 #include "logger.h"
 
@@ -65,4 +66,4 @@ public:
  bool handle();
 };
 
-#endif	/* REQUESTHANDLER_H */
+#endif /* REQUESTHANDLER_H */

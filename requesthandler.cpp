@@ -32,22 +32,34 @@ RequestHandler::RequestHandler(int iconnection, char *cip) {
  
  // Handle request and check request type
  if (handle() == true) {
+  #ifdef DEBUG
   log->debug("", "handle() returned true, continuing!");
+  #endif
   if (request.type == HTTP) {
+   #ifdef DEBUG
    log->debug("http", "This is an HTTP request.");
+   #endif
    if (request.status == 200) {
+    #ifdef DEBUG
     log->debug("http", "Status 200, returning result.");
+    #endif
     //Parse_JSON(&request); // TODO
     outputHTTPHeader(connection, &request);
     s_writeline(connection, "{}", 2);
+    #ifdef DEBUG
     log->debug("http", "Answered to request with HTTP.");
+    #endif
     //Return_Resource(connection, resource, &request); // TODO, response
    } //else Return_Error_Msg(conn, &request); // TODO
   } else if (request.type == TN) {
+   #ifdef DEBUG
    log->debug("tn", "This is a TN request.");
+   #endif
    //Parse_JSON(request); // TODO
    s_writeline(connection, "{}", 2);
+   #ifdef DEBUG
    log->debug("tn", "Answered to request with TN.");
+   #endif
   } else log->warning("", "Unknown request type, killing request.");
  } else log->warning("", "Couldn't handle request, killing it.");
  
@@ -62,7 +74,9 @@ void RequestHandler::InitRequest(Request *request) {
  request->useragent = NULL;
  request->referer = NULL;
  request->resource = NULL;
+ #ifdef DEBUG
  log->debug("", "Initialised request.");
+ #endif
 }
 
 /* FreeRequest: Clear the request data */
@@ -70,7 +84,9 @@ void RequestHandler::FreeRequest(Request *request) {
  if (request->resource) free(request->resource);
  if (request->useragent) free(request->useragent);
  if (request->referer) free(request->referer);
+ #ifdef DEBUG
  log->debug("", "Free'd request.");
+ #endif
 }
 
 /* handle: Handle a request */
@@ -121,7 +137,9 @@ bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
  s_writeline(connection, "\r\n", 2);
  
+ #ifdef DEBUG
  log->debug("http", "HTTP headers forged and sent.");
+ #endif
  
  return true;
 }
