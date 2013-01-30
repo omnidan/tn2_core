@@ -2,4 +2,3 @@
  * Read through code and improve performance, restructure if needed
  * Implement the JSON parser
  * Implement api.cpp, where one can easily create an API
- * Prevent zombie subprocesses ([tnreq] <defunct>)

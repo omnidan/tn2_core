@@ -91,7 +91,8 @@ int Socket::loop() {
   
   // Cleanup
   if (close(connection) < 0) printf("[WARN] [socket] Couldn't close connection.\n");
-  waitpid(-1, NULL, WNOHANG);
+  waitpid(-1, NULL, WNOHANG);//waitpid(-1, NULL, WNOHANG);
+  signal(SIGCHLD, SIG_IGN);
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent
