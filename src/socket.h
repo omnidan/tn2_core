@@ -33,8 +33,24 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+#ifndef FORKING
+#include <pthread.h>
+typedef struct {
+ int connection;
+ int listener;
+ sockaddr_in client;
+ char *cip;
+} conndata;
+#endif
+
 // Internal headers
 #include "requesthandler.h"
+
+#ifdef FORKING
+void newconn(int, sockaddr_in, char *);
+#else
+void *newconn(void *);
+#endif
 
 class Socket {
 private:

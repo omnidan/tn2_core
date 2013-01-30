@@ -31,7 +31,7 @@
 
 // Switch settings (can be turned on/off)
 // Debug setting, comment to disable debug messages, uncomment to enable.
-//#define DEBUG
+#define DEBUG
 
 // If this is not defined, it will use pthreads instead of fork() - EXPERIMENTAL
 #define FORKING

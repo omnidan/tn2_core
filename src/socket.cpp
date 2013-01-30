@@ -56,22 +56,18 @@ Socket::Socket(int port) {
  #endif
 }
 
-/* loop: Main loop for the socket */
-int Socket::loop() {
- // Initialise client struct
- sockaddr_in client;
- client.sin_family = AF_INET;
- socklen_t clen = sizeof(client);
- char *cip;
- 
- while (true) {
-  // Accept connection if available
-  if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
-  
-  #ifdef FORKING
-  // New connection, fork a new process
-  // TODO: Check if a fork limit is needed here
-  if ((pid=fork()) == 0) {
+#ifdef FORKING
+void newconn(int connection, int listener, sockaddr_in client, char *cip) {
+#else
+void *newconn(void *ptr) {
+conndata *tdata;
+tdata = (conndata *)ptr;
+int connection = tdata->connection;
+int listener = tdata->listener;
+sockaddr_in client = tdata->client;
+char *cip = tdata->cip;
+#endif
+// newconn
    #ifdef DEBUG
    printf("[DEBUG] [child] New connection. Forked child process.\n");
    #endif
@@ -88,17 +84,48 @@ int Socket::loop() {
    #ifdef DEBUG
    printf("[DEBUG] [child] Connection closed. Killing child process.\n");
    #endif
-   exit(EXIT_SUCCESS); // Kill child process
+// end newconn
+#ifdef FORKING
+exit(EXIT_SUCCESS); // Kill child process
+#else
+pthread_exit(0); // Kill child process
+#endif
+}
+
+/* loop: Main loop for the socket */
+int Socket::loop() {
+ // Initialise client struct
+ sockaddr_in client;
+ client.sin_family = AF_INET;
+ socklen_t clen = sizeof(client);
+ char *cip = NULL;
+ 
+ while (true) {
+  // Accept connection if available
+  if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
+  
+  #ifdef FORKING
+  // New connection, fork a new process
+  // TODO: Check if a fork limit is needed here
+  if ((pid=fork()) == 0) {
+   newconn(connection, listener, client, cip);
   }
+  waitpid(-1, NULL, WNOHANG);
+  signal(SIGCHLD, SIG_IGN);
   #else
   // New connection, create a new thread
-  
+  pthread_t thread;
+  conndata *tdata = NULL;
+  tdata->connection = connection;
+  tdata->listener = listener;
+  tdata->client = client;
+  tdata->cip = cip;
+  pthread_create(&thread, NULL, newconn, (void *)tdata);
+  pthread_join(thread, NULL);
   #endif
   
   // Cleanup
   if (close(connection) < 0) printf("[WARN] [socket] Couldn't close connection.\n");
-  waitpid(-1, NULL, WNOHANG);
-  signal(SIGCHLD, SIG_IGN);
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent
