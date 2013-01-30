@@ -63,19 +63,20 @@ int Socket::loop() {
   sockaddr_in client;
   client.sin_family = AF_INET;
   socklen_t clen = sizeof(client);
+  char *cip;
   
   // Accept connection if available
   if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
   
   // New connection, fork a new process
+  // TODO: Check if a fork limit is needed here
   if ((pid=fork()) == 0) {
    #ifdef DEBUG
    printf("[DEBUG] [child] New connection. Forked child process.\n");
    #endif
-   char *cip;
    if ((cip = inet_ntoa(client.sin_addr)) < 0) {
     printf("[ERROR] [child] Failed to get peer address.\n");
-    exit(EXIT_FAILURE);              
+    exit(EXIT_FAILURE);
    } 
    #ifdef DEBUG
    printf("[DEBUG] [child] Peer address: %s\n", cip);

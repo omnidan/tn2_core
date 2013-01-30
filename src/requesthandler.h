@@ -44,8 +44,6 @@ struct Request {
  enum RequestMethod method;
  enum RequestLevel level;
  enum RequestType type;
- char *referer;
- char *useragent;
  char *resource;
  int status;
 };
@@ -53,7 +51,6 @@ struct Request {
 class RequestHandler {
 private:
  Request request;
- int connection;
  char *clientip;
  void InitRequest(Request *);
  void FreeRequest(Request *);
@@ -61,7 +58,7 @@ private:
  bool parseHTTPHeader(char *, Request *);
 public:
  RequestHandler(int, char*);
- bool handle();
+ bool handle(int);
 };
 
 #endif /* REQUESTHANDLER_H */

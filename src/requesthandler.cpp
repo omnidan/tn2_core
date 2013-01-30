@@ -20,15 +20,14 @@
 #include "requesthandler.h"
 
 /* RequestHandler: Constructor */
-RequestHandler::RequestHandler(int iconnection, char *cip) {
+RequestHandler::RequestHandler(int connection, char *cip) {
  clientip = cip;
- connection = iconnection;
  
  // Initialise request
  InitRequest(&request);
  
  // Handle request and check request type
- if (handle() == true) {
+ if (handle(connection) == true) {
   #ifdef DEBUG
   printf("[DEBUG] [request] handle() returned true, continuing!\n");
   #endif
@@ -68,8 +67,6 @@ RequestHandler::RequestHandler(int iconnection, char *cip) {
 void RequestHandler::InitRequest(Request *request) {
  request->status = 200;
  request->method = UNSUPPORTED;
- request->useragent = NULL;
- request->referer = NULL;
  request->resource = NULL;
  #ifdef DEBUG
  printf("[DEBUG] [request] Initialised request.\n");
@@ -79,15 +76,13 @@ void RequestHandler::InitRequest(Request *request) {
 /* FreeRequest: Clear the request data */
 void RequestHandler::FreeRequest(Request *request) {
  if (request->resource) free(request->resource);
- if (request->useragent) free(request->useragent);
- if (request->referer) free(request->referer);
  #ifdef DEBUG
  printf("[DEBUG] [request] Free'd request.\n");
  #endif
 }
 
 /* handle: Handle a request */
-bool RequestHandler::handle() {
+bool RequestHandler::handle(int connection) {
  char buffer[MAX_REQ_LINE] = {0};
  int rval;
  fd_set fds;
@@ -192,14 +187,6 @@ bool RequestHandler::parseHTTPHeader(char *buffer, Request *request) {
  buffer = endptr + 1;
  while (*buffer && isspace(*buffer)) ++buffer;
  if (*buffer == '\0') return true;
- 
- if (!strcmp(temp, "USER-AGENT")) {
-  request->useragent = (char *)malloc(strlen(buffer) + 1);
-  strcpy(request->useragent, buffer);
- } else if (!strcmp(temp, "REFERER")) {
-  request->referer = (char *)malloc(strlen(buffer) + 1);
-  strcpy(request->referer, buffer);
- }
  
  free(temp);
  return true;
