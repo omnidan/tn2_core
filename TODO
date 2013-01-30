@@ -3,3 +3,4 @@
  * Implement the JSON parser
  * Implement api.cpp, where one can easily create an API
  * After a few requests, ram goes up to 1108 from 980 bytes. Check why.
+ * Non-debug version uses 4 bytes more ram. Check why.
