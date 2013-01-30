@@ -30,8 +30,7 @@
 // Strings
 std::string stoupper(std::string);
 int stoupper(char *);
-int sttrim(char *);
-void urlize(char *);
+int strim(char *);
 
 // Sockets
 ssize_t s_readline(int, void *, size_t);

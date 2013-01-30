@@ -5,7 +5,7 @@
  *
  *    Description:  Handle requests
  *
- *        Version:  1.0
+ *        Version:  0.1
  *        Created:  28/01/13 21:47:34
  *       Revision:  none
  *       Compiler:  gcc
@@ -117,7 +117,7 @@ bool RequestHandler::handle(int connection) {
     return true;
    } else {
     request.type = HTTP;
-    sttrim(buffer);
+    strim(buffer);
    }
    
    // HTTP stuff

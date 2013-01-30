@@ -5,7 +5,7 @@
  *
  *    Description:  Additional functions
  *
- *        Version:  0.1
+ *        Version:  0.2
  *        Created:  28/01/13 22:18:03
  *       Revision:  none
  *       Compiler:  g++
@@ -29,7 +29,7 @@ std::string stoupper(std::string s) {
     return s;
 }
 
-// Overloaded function for C strings
+// Overloaded function for cstrings
 int stoupper(char *buffer) {
  while (*buffer) {
   *buffer = toupper(*buffer);
@@ -39,29 +39,10 @@ int stoupper(char *buffer) {
 }
 
 // Remove trailing whitespace from a string
-int sttrim(char *buffer) {
+int strim(char *buffer) {
  int n = strlen(buffer)-1;
  while (!isalnum(buffer[n]) && (n >= 0)) buffer[n--] = '\0';
  return 0;
-}
-
-// Make an URL valid
-void urlize(char *buffer) {
- char asciinum[3] = {0};
- int i=0;
- int c;
- 
- while (buffer[i]) {
-  if (buffer[i] == '+') buffer[i] = ' ';
-  else if (buffer[i] == '%') {
-   asciinum[0] = buffer[i+1];
-   asciinum[1] = buffer[i+2];
-   buffer[i] = strtol(asciinum, NULL, 16);
-   c = i+1;
-   do { buffer[c] = buffer[c+2]; } while (buffer[2+(c++)]);
-  }
-  ++i;
- }
 }
 
 // Read line from socket
