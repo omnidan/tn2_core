@@ -5,7 +5,7 @@
  *
  *    Description:  Socket control headers
  *
- *        Version:  0.1
+ *        Version:  0.2
  *        Created:  27/01/13 20:56:23
  *       Revision:  none
  *       Compiler:  g++
@@ -22,6 +22,7 @@
 #include "config.h"
 
 // Standard headers
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

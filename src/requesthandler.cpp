@@ -58,9 +58,17 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    #endif
   } else printf("[WARN] [request] Unknown request type, killing request.\n");
  } else printf("[WARN] [request] Couldn't handle request, killing it.\n");
- 
+}
+
+/* ~RequestHandler: Destructor */
+
+RequestHandler::~RequestHandler() {
  // Free request data stored in ram
  FreeRequest(&request);
+ 
+ #ifdef DEBUG
+ printf("[DEBUG] [request] Destructed RequestHandler.\n");
+ #endif
 }
 
 /* InitRequest: Initialises the request data */
@@ -75,7 +83,7 @@ void RequestHandler::InitRequest(Request *request) {
 
 /* FreeRequest: Clear the request data */
 void RequestHandler::FreeRequest(Request *request) {
- if (request->resource) free(request->resource);
+ if (request->resource) delete request->resource;
  #ifdef DEBUG
  printf("[DEBUG] [request] Free'd request.\n");
  #endif

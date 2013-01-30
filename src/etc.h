@@ -5,7 +5,7 @@
  *
  *    Description:  Additional functions - headers
  *
- *        Version:  0.1
+ *        Version:  0.2
  *        Created:  28/01/13 22:28:24
  *       Revision:  none
  *       Compiler:  g++
@@ -23,13 +23,8 @@
 
 #include <iostream>
 #include <algorithm>
-#include <cctype>
-#include <functional>
 #include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include <errno.h>
-#include <ctype.h>
 #include <string.h>
 
 // Strings

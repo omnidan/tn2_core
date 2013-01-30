@@ -5,7 +5,7 @@
  *
  *    Description:  Socket control
  *
- *        Version:  1.0
+ *        Version:  0.2
  *        Created:  27/01/13 20:55:15
  *       Revision:  none
  *       Compiler:  gcc
@@ -58,13 +58,13 @@ Socket::Socket(int port) {
 
 /* loop: Main loop for the socket */
 int Socket::loop() {
+ // Initialise client struct
+ sockaddr_in client;
+ client.sin_family = AF_INET;
+ socklen_t clen = sizeof(client);
+ char *cip;
+ 
  while (true) {
-  // Initialise client struct
-  sockaddr_in client;
-  client.sin_family = AF_INET;
-  socklen_t clen = sizeof(client);
-  char *cip;
-  
   // Accept connection if available
   if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
   
@@ -82,7 +82,8 @@ int Socket::loop() {
    printf("[DEBUG] [child] Peer address: %s\n", cip);
    #endif
    if (close(listener) < 0) printf("[WARN] [child] Couldn't close socket.\n");
-   new RequestHandler(connection, cip); // Initialise request handler
+   RequestHandler *rh = new RequestHandler(connection, cip); // Initialise request handler
+   delete rh; // and free the ram
    if (close(connection) < 0) printf("[WARN] [child] Couldn't close connection.\n");
    #ifdef DEBUG
    printf("[DEBUG] [child] Connection closed. Killing child process.\n");
@@ -92,7 +93,7 @@ int Socket::loop() {
   
   // Cleanup
   if (close(connection) < 0) printf("[WARN] [socket] Couldn't close connection.\n");
-  waitpid(-1, NULL, WNOHANG);//waitpid(-1, NULL, WNOHANG);
+  waitpid(-1, NULL, WNOHANG);
   signal(SIGCHLD, SIG_IGN);
  }
  

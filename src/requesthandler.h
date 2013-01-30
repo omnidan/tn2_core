@@ -5,7 +5,7 @@
  *
  *    Description:  Request handler headers
  *
- *        Version:  0.1
+ *        Version:  0.2
  *        Created:  27/01/13 21:48:26
  *       Revision:  none
  *       Compiler:  g++
@@ -22,16 +22,9 @@
 #include "config.h"
 
 // Standard headers
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-// Network headers
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <arpa/inet.h>
-#include <unistd.h>
+#include <stdlib.h>
 
 // Internal headers
 #include "etc.h"
@@ -58,6 +51,7 @@ private:
  bool parseHTTPHeader(char *, Request *);
 public:
  RequestHandler(int, char*);
+ ~RequestHandler();
  bool handle(int);
 };
 
