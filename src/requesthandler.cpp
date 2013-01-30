@@ -96,8 +96,8 @@ bool RequestHandler::handle(int connection) {
  fd_set fds;
  struct timeval tv;
  
- // Timeout: 5 seconds
- tv.tv_sec = 5;
+ // Timeout
+ tv.tv_sec = REQUEST_TIMEOUT;
  tv.tv_usec = 0;
  
  do {
@@ -146,8 +146,8 @@ bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
 
 bool RequestHandler::parseHTTPHeader(char *buffer, Request *request) {
  static bool first_line = true;
- char *temp;
- char *endptr;
+ char *temp = NULL;
+ char *endptr = NULL;
  int len;
  if (first_line == true) {
   if (!strncmp(buffer, "GET ", 4)) {
@@ -196,6 +196,5 @@ bool RequestHandler::parseHTTPHeader(char *buffer, Request *request) {
  while (*buffer && isspace(*buffer)) ++buffer;
  if (*buffer == '\0') return true;
  
- free(temp);
  return true;
 }

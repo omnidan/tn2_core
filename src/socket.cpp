@@ -82,8 +82,7 @@ int Socket::loop() {
    printf("[DEBUG] [child] Peer address: %s\n", cip);
    #endif
    if (close(listener) < 0) printf("[WARN] [child] Couldn't close socket.\n");
-   RequestHandler *rh = new RequestHandler(connection, cip); // Initialise request handler
-   delete rh; // and free the ram
+   RequestHandler(connection, cip); // Initialise request handler
    if (close(connection) < 0) printf("[WARN] [child] Couldn't close connection.\n");
    #ifdef DEBUG
    printf("[DEBUG] [child] Connection closed. Killing child process.\n");

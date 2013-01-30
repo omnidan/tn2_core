@@ -21,6 +21,7 @@
 
 // User settings (change if you want to)
 #define PORT		8080
+#define REQUEST_TIMEOUT	5
 
 // System settings/limits (do not change if you don't know what you're doing)
 #define LISTENQ		100
