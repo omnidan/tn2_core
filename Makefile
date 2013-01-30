@@ -5,13 +5,14 @@ OBJECTS=$(SOURCES:.cpp=.o)
 SOURCES_CLIENT=src/main_client.cpp src/etc.cpp
 OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)
 CPP=g++
-FLAGS=-ansi -pedantic -Wall
+FLAGS_SERVER=-lpthread
+FLAGS=-ansi -pedantic -Wall -Werror -s -O3
 LDFLAGS=
 
 all: clean $(EXECUTABLE) $(EXECUTABLE_CLIENT)
 
 $(EXECUTABLE):
-	$(CPP) $(SOURCES) $(FLAGS) -o $@
+	$(CPP) $(SOURCES) $(FLAGS) $(FLAGS_SERVER) -o $@
 
 $(EXECUTABLE_CLIENT):
 	$(CPP) $(SOURCES_CLIENT) $(FLAGS) -o $@

@@ -28,7 +28,12 @@
 #define MAX_REQ_LINE	1024
 #define VERSION		"TNREQ v0.2"
 
+
+// Switch settings (can be turned on/off)
 // Debug setting, comment to disable debug messages, uncomment to enable.
-#define DEBUG
+//#define DEBUG
+
+// If this is not defined, it will use pthreads instead of fork() - EXPERIMENTAL
+#define FORKING
 
 #endif /* CONFIG_H */

@@ -68,6 +68,7 @@ int Socket::loop() {
   // Accept connection if available
   if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
   
+  #ifdef FORKING
   // New connection, fork a new process
   // TODO: Check if a fork limit is needed here
   if ((pid=fork()) == 0) {
@@ -89,6 +90,10 @@ int Socket::loop() {
    #endif
    exit(EXIT_SUCCESS); // Kill child process
   }
+  #else
+  // New connection, create a new thread
+  
+  #endif
   
   // Cleanup
   if (close(connection) < 0) printf("[WARN] [socket] Couldn't close connection.\n");
