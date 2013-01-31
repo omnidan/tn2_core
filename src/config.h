@@ -33,7 +33,4 @@
 // Debug setting, comment to disable debug messages, uncomment to enable.
 #define DEBUG
 
-// If this is not defined, it will use pthreads instead of fork() - EXPERIMENTAL
-#define FORKING
-
 #endif /* CONFIG_H */

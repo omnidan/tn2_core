@@ -56,40 +56,24 @@ Socket::Socket(int port) {
  #endif
 }
 
-#ifdef FORKING
-void newconn(int connection, int listener, sockaddr_in client, char *cip) {
-#else
-void *newconn(void *ptr) {
-conndata *tdata;
-tdata = (conndata *)ptr;
-int connection = tdata->connection;
-int listener = tdata->listener;
-sockaddr_in client = tdata->client;
-char *cip = tdata->cip;
+void Socket::newconn() {
+#ifdef DEBUG
+printf("[DEBUG] [child] New connection. Forked child process.\n");
 #endif
-// newconn
-   #ifdef DEBUG
-   printf("[DEBUG] [child] New connection. Forked child process.\n");
-   #endif
-   if ((cip = inet_ntoa(client.sin_addr)) < 0) {
-    printf("[ERROR] [child] Failed to get peer address.\n");
-    exit(EXIT_FAILURE);
-   } 
-   #ifdef DEBUG
-   printf("[DEBUG] [child] Peer address: %s\n", cip);
-   #endif
-   if (close(listener) < 0) printf("[WARN] [child] Couldn't close socket.\n");
-   RequestHandler(connection, cip); // Initialise request handler
-   if (close(connection) < 0) printf("[WARN] [child] Couldn't close connection.\n");
-   #ifdef DEBUG
-   printf("[DEBUG] [child] Connection closed. Killing child process.\n");
-   #endif
-// end newconn
-#ifdef FORKING
+if ((tdata.cip = inet_ntoa(tdata.client.sin_addr)) < 0) {
+ printf("[ERROR] [child] Failed to get peer address.\n");
+ exit(EXIT_FAILURE);
+} 
+#ifdef DEBUG
+printf("[DEBUG] [child] Peer address: %s\n", tdata.cip);
+#endif
+if (close(tdata.listener) < 0) printf("[WARN] [child] Couldn't close socket.\n");
+RequestHandler(tdata.connection, tdata.cip); // Initialise request handler
+if (close(tdata.connection) < 0) printf("[WARN] [child] Couldn't close connection.\n");
+#ifdef DEBUG
+printf("[DEBUG] [child] Connection closed. Killing child process.\n");
+#endif
 exit(EXIT_SUCCESS); // Kill child process
-#else
-pthread_exit(0); // Kill child process
-#endif
 }
 
 /* loop: Main loop for the socket */
@@ -104,20 +88,13 @@ int Socket::loop() {
   // Accept connection if available
   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { printf("[WARN] [socket] Couldn't accept connection.\n"); continue; }
   
-  #ifdef FORKING
   // New connection, fork a new process
   // TODO: Check if a fork limit is needed here
-  if ((pid=fork()) == 0) {
-   newconn(tdata.connection, tdata.listener, tdata.client, tdata.cip);
-  }
+  if ((pid=fork()) == 0) newconn();
+  
+  // Automatically kill finished processes
   waitpid(-1, NULL, WNOHANG);
   signal(SIGCHLD, SIG_IGN);
-  #else
-  // New connection, create a new thread
-  pthread_t thread;
-  pthread_create(&thread, NULL, newconn, (void *)&tdata);
-  pthread_join(thread, NULL);
-  #endif
   
   // Cleanup
   if (close(tdata.connection) < 0) { printf("[WARN] [socket] Couldn't close connection.\n"); continue; }
