@@ -22,7 +22,7 @@
 /* Socket: Constructor */
 Socket::Socket(int port) {
  // Create socket
- if ((listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+ if ((tdata.listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
   printf("[ERROR] [socket] Couldn't create socket.\n");
   exit(EXIT_FAILURE);
  }
@@ -38,7 +38,7 @@ Socket::Socket(int port) {
  sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
   
  // Bind socket
- if (bind(listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) {
+ if (bind(tdata.listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) {
   printf("[ERROR] [socket] Couldn't bind to socket.\n");
   exit(EXIT_FAILURE);
  }
@@ -47,7 +47,7 @@ Socket::Socket(int port) {
  #endif
  
  // Listen to socket
- if (listen(listener, LISTENQ) < 0) {
+ if (listen(tdata.listener, LISTENQ) < 0) {
   printf("[ERROR] [socket] Couldn't listen to socket.\n");
   exit(EXIT_FAILURE);
  }
@@ -98,34 +98,29 @@ int Socket::loop() {
  sockaddr_in client;
  client.sin_family = AF_INET;
  socklen_t clen = sizeof(client);
- char *cip = NULL;
+ tdata.cip = NULL;
  
  while (true) {
   // Accept connection if available
-  if ((connection=accept(listener, (struct sockaddr*)&client, &clen)) < 0) printf("[WARN] [socket] Couldn't accept connection.\n");
+  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { printf("[WARN] [socket] Couldn't accept connection.\n"); continue; }
   
   #ifdef FORKING
   // New connection, fork a new process
   // TODO: Check if a fork limit is needed here
   if ((pid=fork()) == 0) {
-   newconn(connection, listener, client, cip);
+   newconn(tdata.connection, tdata.listener, tdata.client, tdata.cip);
   }
   waitpid(-1, NULL, WNOHANG);
   signal(SIGCHLD, SIG_IGN);
   #else
   // New connection, create a new thread
   pthread_t thread;
-  conndata tdata;
-  tdata.connection = connection;
-  tdata.listener = listener;
-  tdata.client = client;
-  tdata.cip = cip;
   pthread_create(&thread, NULL, newconn, (void *)&tdata);
   pthread_join(thread, NULL);
   #endif
   
   // Cleanup
-  if (close(connection) < 0) printf("[WARN] [socket] Couldn't close connection.\n");
+  if (close(tdata.connection) < 0) { printf("[WARN] [socket] Couldn't close connection.\n"); continue; }
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent

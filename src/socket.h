@@ -35,13 +35,14 @@
 
 #ifndef FORKING
 #include <pthread.h>
+#endif
+
 typedef struct {
  int connection;
  int listener;
  sockaddr_in client;
  char *cip;
 } conndata;
-#endif
 
 // Internal headers
 #include "requesthandler.h"
@@ -54,9 +55,10 @@ void *newconn(void *);
 
 class Socket {
 private:
- int listener;
- int connection;
+ conndata tdata;
+ #ifdef FORKING
  pid_t pid;
+ #endif
 public:
  Socket(int);
  int loop();

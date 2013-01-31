@@ -5,7 +5,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 SOURCES_CLIENT=src/main_client.cpp src/etc.cpp
 OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)
 CPP=g++
-FLAGS_SERVER=-lpthread
+FLAGS_SERVER=# Only when compiling with threads: -lpthread
 FLAGS=-ansi -pedantic -Wall -Werror -s -O3
 LDFLAGS=
 DEBUG_FLAGS=-g -lm -Wall

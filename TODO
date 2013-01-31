@@ -2,6 +2,5 @@
  * Read through code and improve performance, restructure if needed
  * Implement the JSON parser
  * Implement api.cpp, where one can easily create an API
- * Non-debug version uses 4 bytes more ram. Check why.
  * Connections to the internet fail
  * SSL
