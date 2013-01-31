@@ -115,12 +115,12 @@ int Socket::loop() {
   #else
   // New connection, create a new thread
   pthread_t thread;
-  conndata *tdata = NULL;
-  tdata->connection = connection;
-  tdata->listener = listener;
-  tdata->client = client;
-  tdata->cip = cip;
-  pthread_create(&thread, NULL, newconn, (void *)tdata);
+  conndata tdata;
+  tdata.connection = connection;
+  tdata.listener = listener;
+  tdata.client = client;
+  tdata.cip = cip;
+  pthread_create(&thread, NULL, newconn, (void *)&tdata);
   pthread_join(thread, NULL);
   #endif
   

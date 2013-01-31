@@ -34,6 +34,6 @@
 #define DEBUG
 
 // If this is not defined, it will use pthreads instead of fork() - EXPERIMENTAL
-#define FORKING
+//#define FORKING
 
 #endif /* CONFIG_H */
