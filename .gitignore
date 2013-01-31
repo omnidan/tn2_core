@@ -1,2 +1,4 @@
 bin/tnreq
 bin/apicli
+bin/tnreq_debug
+bin/apicli_debug
