@@ -1854,8 +1854,8 @@ Value::Value( double value )
 
 Value::Value( const char *value )
    : type_( stringValue )
-   , allocated_( true )
-   , comments_( 0 )
+//   , allocated_( true )
+//   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1867,8 +1867,8 @@ Value::Value( const char *value )
 Value::Value( const char *beginValue, 
               const char *endValue )
    : type_( stringValue )
-   , allocated_( true )
-   , comments_( 0 )
+//   , allocated_( true )
+//   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1880,8 +1880,8 @@ Value::Value( const char *beginValue,
 
 Value::Value( const std::string &value )
    : type_( stringValue )
-   , allocated_( true )
-   , comments_( 0 )
+//   , allocated_( true )
+//   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1947,7 +1947,7 @@ Value::Value( const Value &other )
       if ( other.value_.string_ )
       {
          value_.string_ = duplicateStringValue( other.value_.string_ );
-         allocated_ = true;
+         // FIXME: Could cause bugs: allocated_ = true;
       }
       else
          value_.string_ = 0;

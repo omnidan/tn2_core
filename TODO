@@ -2,5 +2,4 @@
  * Read through code and improve performance, restructure if needed
  * Connections to the internet fail
  * SSL
- * Fix warnings in json.cpp
  * Add BaseAPI class for the base functions the API should have and extend the API class on that
