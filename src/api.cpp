@@ -21,5 +21,5 @@
 
 /* API: Constructor */
 API::API(Json::Value jRoot) {
- result = (std::string)"{}"; // Set result, the requesthandler will get this.
+ result = "{}"; // Set result, the requesthandler will get this.
 }

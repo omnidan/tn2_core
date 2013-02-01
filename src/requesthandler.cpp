@@ -42,7 +42,10 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     outputHTTPHeader(connection, &request);
     if (parseJSON()) {
      API api = API(jRoot);
-     s_writeline(connection, api.result.c_str(), sizeof(api.result.c_str()));
+     #ifdef DEBUG
+     printf("[DEBUG] [request_api] Got API result(%d): %s\n", strlen(api.result.c_str()), api.result.c_str());
+     #endif
+     s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
     } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
