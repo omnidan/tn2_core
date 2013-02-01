@@ -56,8 +56,11 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    printf("[DEBUG] [request_tn] This is a TN request.\n");
    #endif
    if (parseJSON()) {
-    // TODO: Put result into API
-    s_writeline(connection, "{}", 2);
+    API api = API(jRoot);
+    #ifdef DEBUG
+    printf("[DEBUG] [request_api] Got API result(%lu): %s\n", strlen(api.result.c_str()), api.result.c_str());
+    #endif
+    s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] Answered to request with TN.\n");
@@ -80,7 +83,7 @@ bool RequestHandler::parseJSON() {
 /* ~RequestHandler: Destructor */
 RequestHandler::~RequestHandler() {
  // Free request data stored in ram
- FreeRequest(&request);
+ //FreeRequest(&request);
  
  #ifdef DEBUG
  printf("[DEBUG] [request] Destructed RequestHandler.\n");
@@ -130,6 +133,7 @@ bool RequestHandler::handle(int connection) {
    
    if (buffer[0] == '{') {
     request.type = TN;
+    request.resource = buffer;
     return true;
    } else {
     request.type = HTTP;

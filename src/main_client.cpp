@@ -44,7 +44,7 @@ void test1(int connection) {
 }
 
 void test2(int connection) {
- s_writeline(connection, "{}", 2);
+ s_writeline(connection, "{}\r\n", 4);
 }
 
 int establishConnection(char *serverip, int port) {
@@ -78,8 +78,7 @@ int main(int argc, char *argv []) {
  
  printf("[~] Connected to %s... Starting benchmarks.\n", serverip);
  
- timestamp_t benchmark0, benchmark1;
- double secs;
+ timestamp_t benchmark0, benchmark1, benchmark2;
  
  fd_set fds;
  struct timeval tv;
@@ -89,30 +88,30 @@ int main(int argc, char *argv []) {
  
  benchmark0 = timestamp();
  test1(connection);
+ benchmark1 = timestamp();
  FD_ZERO(&fds);
  FD_SET(connection, &fds);
  rval = select(connection+1, &fds, NULL, NULL, &tv);
  if (rval < 0) printf("[-] Test 1 (HTTP) failed.\n");
  else {
-  benchmark1 = timestamp();
-  secs = (benchmark1 - benchmark0) / 1000.0L;
-  if ((secs+1) > 3000) printf("[-] Test 1 (HTTP) timed out.\n");
-  else printf("[+] Test 1 (HTTP) took %0.5f milliseconds.\n", secs);
+  benchmark2 = timestamp();
+  if ((((benchmark2-benchmark1)/1000.0L)+1) > 3000) printf("[-] Test 1 (HTTP) : Timeout.\n");
+  else printf("[+] Test 1 (HTTP) : Send: %0.5f milliseconds, Recv: %0.5f milliseconds.\n", (double)((benchmark1-benchmark0)/1000.0L), (double)((benchmark2-benchmark1)/1000.0L));
  }
  close(connection);
  if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
  benchmark0 = timestamp();
  test2(connection);
+ benchmark1 = timestamp();
  FD_ZERO(&fds);
  FD_SET(connection, &fds);
  rval = select(connection+1, &fds, NULL, NULL, &tv);
  if (rval < 0) printf("[-] Test 2 (TN)   failed.\n");
  else {
-  benchmark1 = timestamp();
-  secs = (benchmark1 - benchmark0) / 1000.0L;
-  if ((secs+1) > 3000) printf("[-] Test 2 (TN)   timed out.\n");
-  else printf("[+] Test 2 (TN)   took %0.5f milliseconds.\n", secs);
+  benchmark2 = timestamp();
+  if ((((benchmark2-benchmark1)/1000.0L)+1) > 3000) printf("[-] Test 2 (TN)   : Timeout.\n");
+  else printf("[+] Test 2 (TN)   : Send: %0.5f milliseconds, Recv: %0.5f milliseconds.\n", (double)((benchmark1-benchmark0)/1000.0L), (double)((benchmark2-benchmark1)/1000.0L));
  }
  close(connection);
  return 0;
