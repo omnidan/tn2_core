@@ -91,43 +91,31 @@ ssize_t s_writeline(int sockd, void const *vptr, size_t n) {
 }
 
 // Decode HTTP encodings
-std::string UriDecode(const std::string & sSrc)
-{
-   // Note from RFC1630: "Sequences which start with a percent
-   // sign but are not followed by two hexadecimal characters
-   // (0-9, A-F) are reserved for future extension"
-
-   const unsigned char * pSrc = (const unsigned char *)sSrc.c_str();
-   const int SRC_LEN = sSrc.length();
-   const unsigned char * const SRC_END = pSrc + SRC_LEN;
-   // last decodable '%' 
-   const unsigned char * const SRC_LAST_DEC = SRC_END - 2;
-
-   char * const pStart = new char[SRC_LEN];
-   char * pEnd = pStart;
-
-   while (pSrc < SRC_LAST_DEC)
-   {
-      if (*pSrc == '%')
-      {
-         char dec1, dec2;
-         if (-1 != (dec1 = HEX2DEC[*(pSrc + 1)])
-            && -1 != (dec2 = HEX2DEC[*(pSrc + 2)]))
-         {
-            *pEnd++ = (dec1 << 4) + dec2;
-            pSrc += 3;
-            continue;
-         }
-      }
-
-      *pEnd++ = *pSrc++;
+std::string decodeURI(const std::string & sSrc) {
+ const unsigned char * pSrc = (const unsigned char *)sSrc.c_str();
+ const int SRC_LEN = sSrc.length();
+ const unsigned char * const SRC_END = pSrc + SRC_LEN;
+ const unsigned char * const SRC_LAST_DEC = SRC_END - 2; // last decodable '%' 
+ 
+ char * const pStart = new char[SRC_LEN];
+ char * pEnd = pStart;
+ 
+ while (pSrc < SRC_LAST_DEC) {
+  if (*pSrc == '%') {
+   char dec1, dec2;
+   if (-1 != (dec1 = HEX2DEC[*(pSrc + 1)]) && -1 != (dec2 = HEX2DEC[*(pSrc + 2)])) {
+    *pEnd++ = (dec1 << 4) + dec2;
+    pSrc += 3;
+    continue;
    }
-
-   // the last 2- chars
-   while (pSrc < SRC_END)
-      *pEnd++ = *pSrc++;
-
-   std::string sResult(pStart, pEnd);
-   delete [] pStart;
-   return sResult;
+  }
+  *pEnd++ = *pSrc++;
+ }
+ 
+ while (pSrc < SRC_END) *pEnd++ = *pSrc++; // the last 2- chars
+ 
+ std::string sResult(pStart, pEnd);
+ delete [] pStart;
+ 
+ return sResult;
 }

@@ -63,6 +63,6 @@ ssize_t s_readline(int, void *, size_t);
 ssize_t s_writeline(int, void const *, size_t);
 
 // HTTP
-std::string UriDecode(const std::string &);
+std::string decodeURI(const std::string &);
 
 #endif /* ETC_H */

@@ -43,7 +43,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     if (parseJSON()) {
      API api = API(jRoot);
      #ifdef DEBUG
-     printf("[DEBUG] [request_api] Got API result(%d): %s\n", strlen(api.result.c_str()), api.result.c_str());
+     printf("[DEBUG] [request_api] Got API result(%lu): %s\n", strlen(api.result.c_str()), api.result.c_str());
      #endif
      s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
     } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
@@ -69,7 +69,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
 /* parseJSON: JSON parser */
 bool RequestHandler::parseJSON() {
  if (request.type == HTTP) memmove(request.resource, request.resource+1, strlen(request.resource)); // Remove / prefix from the GET request
- std::string data = UriDecode(request.resource);
+ std::string data = decodeURI(request.resource);
  #ifdef DEBUG
  std::cout << "[DEBUG] [request_json] Got data: " << data << "\n";
  #endif
