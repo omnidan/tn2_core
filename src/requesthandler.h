@@ -28,6 +28,7 @@
 
 // Internal headers
 #include "etc.h"
+#include "json/json.h"
 
 enum RequestMethod { GET, HEAD, UNSUPPORTED };
 enum RequestLevel { SIMPLE, FULL };
@@ -44,11 +45,14 @@ struct Request {
 class RequestHandler {
 private:
  Request request;
+ Json::Reader jReader;
+ Json::Value jRoot;
  char *clientip;
  void InitRequest(Request *);
  void FreeRequest(Request *);
  bool outputHTTPHeader(int, Request *);
  bool parseHTTPHeader(char *, Request *);
+ bool parseJSON();
 public:
  RequestHandler(int, char*);
  ~RequestHandler();

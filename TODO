@@ -1,6 +1,7 @@
  * Make everything more C++-like (at the moment, it's a lot C-like)
  * Read through code and improve performance, restructure if needed
- * Implement the JSON parser
  * Implement api.cpp, where one can easily create an API
  * Connections to the internet fail
  * SSL
+ * Fix warnings in json.cpp
+ * Test JSON parser

@@ -39,20 +39,23 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Status 200, returning result.\n");
     #endif
-    //Parse_JSON(&request); // TODO
     outputHTTPHeader(connection, &request);
-    s_writeline(connection, "{}", 2);
+    if (parseJSON()) {
+     // TODO: Put result into API
+     s_writeline(connection, "{}", 2);
+    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
     #endif
-    //Return_Resource(connection, resource, &request); // TODO, response
    } //else Return_Error_Msg(conn, &request); // TODO
   } else if (request.type == TN) {
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] This is a TN request.\n");
    #endif
-   //Parse_JSON(request); // TODO
-   s_writeline(connection, "{}", 2);
+   if (parseJSON()) {
+    // TODO: Put result into API
+    s_writeline(connection, "{}", 2);
+   } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] Answered to request with TN.\n");
    #endif
@@ -60,8 +63,13 @@ RequestHandler::RequestHandler(int connection, char *cip) {
  } else printf("[WARN] [request] Couldn't handle request, killing it.\n");
 }
 
-/* ~RequestHandler: Destructor */
+/* parseJSON: JSON parser */
+bool RequestHandler::parseJSON() {
+ if (!jReader.parse(request.resource, jRoot, false)) { printf("[WARN ] [request_json] Invalid JSON.\n"); return false; }
+ else return true;
+}
 
+/* ~RequestHandler: Destructor */
 RequestHandler::~RequestHandler() {
  // Free request data stored in ram
  FreeRequest(&request);
