@@ -5,7 +5,7 @@ OBJECTS=$(SOURCES:.cpp=.o)
 SOURCES_CLIENT=src/main_client.cpp src/etc.cpp
 OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)
 CPP=g++
-FLAGS=-ansi -pedantic -Wall -s -O3 # -Werror
+FLAGS=-ansi -pedantic -Wall -s -O3 -Werror
 LDFLAGS=
 DEBUG_FLAGS=-g -lm -Wall
 
