@@ -5,7 +5,7 @@
  *
  *    Description:  Main file for the client
  *
- *        Version:  0.1
+ *        Version:  0.2
  *        Created:  29/01/13 20:47:42
  *       Revision:  none
  *       Compiler:  g++

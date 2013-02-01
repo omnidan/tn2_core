@@ -149,7 +149,7 @@ bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
  
  sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
  s_writeline(connection, buffer, strlen(buffer));
- s_writeline(connection, "Server: HTTPAPI v0.1\r\n", 22);
+ s_writeline(connection, "Server: TNREQ v0.2\r\n", 22);
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
  s_writeline(connection, "\r\n", 2);
  
