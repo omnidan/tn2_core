@@ -29,6 +29,7 @@
 // Internal headers
 #include "etc.h"
 #include "json/json.h"
+#include "api.h"
 
 enum RequestMethod { GET, HEAD, UNSUPPORTED };
 enum RequestLevel { SIMPLE, FULL };

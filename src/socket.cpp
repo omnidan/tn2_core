@@ -67,9 +67,9 @@ if ((tdata.cip = inet_ntoa(tdata.client.sin_addr)) < 0) {
 #ifdef DEBUG
 printf("[DEBUG] [child] Peer address: %s\n", tdata.cip);
 #endif
-if (close(tdata.listener) < 0) printf("[WARN] [child] Couldn't close socket.\n");
+if (close(tdata.listener) < 0) printf("[WARN ] [child] Couldn't close socket.\n");
 RequestHandler(tdata.connection, tdata.cip); // Initialise request handler
-if (close(tdata.connection) < 0) printf("[WARN] [child] Couldn't close connection.\n");
+if (close(tdata.connection) < 0) printf("[WARN ] [child] Couldn't close connection.\n");
 #ifdef DEBUG
 printf("[DEBUG] [child] Connection closed. Killing child process.\n");
 #endif
@@ -86,7 +86,7 @@ int Socket::loop() {
  
  while (true) {
   // Accept connection if available
-  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { printf("[WARN] [socket] Couldn't accept connection.\n"); continue; }
+  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { printf("[WARN ] [socket] Couldn't accept connection.\n"); continue; }
   
   // New connection, fork a new process
   // TODO: Check if a fork limit is needed here
@@ -97,7 +97,7 @@ int Socket::loop() {
   signal(SIGCHLD, SIG_IGN);
   
   // Cleanup
-  if (close(tdata.connection) < 0) { printf("[WARN] [socket] Couldn't close connection.\n"); continue; }
+  if (close(tdata.connection) < 0) { printf("[WARN ] [socket] Couldn't close connection.\n"); continue; }
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent

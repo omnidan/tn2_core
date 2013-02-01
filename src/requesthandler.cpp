@@ -41,8 +41,8 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     #endif
     outputHTTPHeader(connection, &request);
     if (parseJSON()) {
-     // TODO: Put result into API
-     s_writeline(connection, "{}", 2);
+     API api = API(jRoot);
+     s_writeline(connection, api.result.c_str(), sizeof(api.result.c_str()));
     } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
@@ -59,13 +59,18 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] Answered to request with TN.\n");
    #endif
-  } else printf("[WARN] [request] Unknown request type, killing request.\n");
- } else printf("[WARN] [request] Couldn't handle request, killing it.\n");
+  } else printf("[WARN ] [request] Unknown request type, killing request.\n");
+ } else printf("[WARN ] [request] Couldn't handle request, killing it.\n");
 }
 
 /* parseJSON: JSON parser */
 bool RequestHandler::parseJSON() {
- if (!jReader.parse(request.resource, jRoot, false)) { printf("[WARN ] [request_json] Invalid JSON.\n"); return false; }
+ if (request.type == HTTP) memmove(request.resource, request.resource+1, strlen(request.resource)); // Remove / prefix from the GET request
+ std::string data = UriDecode(request.resource);
+ #ifdef DEBUG
+ std::cout << "[DEBUG] [request_json] Got data: " << data << "\n";
+ #endif
+ if (!jReader.parse(data, jRoot, false)) { printf("[WARN ] [request_json] Invalid JSON.\n"); return false; }
  else return true;
 }
 
