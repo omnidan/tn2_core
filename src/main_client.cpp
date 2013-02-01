@@ -27,8 +27,6 @@
 #include "etc.h"
 #include "config.h"
 
-#define TESTMSG "{}" // TODO: This could be improved later, when the JSON parser is implemented
-
 typedef unsigned long timestamp_t;
 
 static timestamp_t timestamp() {
@@ -38,14 +36,15 @@ static timestamp_t timestamp() {
 }
 
 void test1(int connection) {
- s_writeline(connection, "HTTP/1.1 200 OK\r\n", 17);
- s_writeline(connection, "Content-Type: application/json\r\n", 32);
+ s_writeline(connection, "GET /%7B%7D HTTP/1.1\r\n", 22); // %7B%7D is the URI encoded version of {}
+ s_writeline(connection, "User-Agent: apicli/0.2\r\n", 24);
+ s_writeline(connection, "Host: 127.0.0.1\r\n", 17);
+ s_writeline(connection, "Accept: */*", 11);
  s_writeline(connection, "\r\n", 2);
- s_writeline(connection, TESTMSG, sizeof(TESTMSG));
 }
 
 void test2(int connection) {
- s_writeline(connection, TESTMSG, sizeof(TESTMSG));
+ s_writeline(connection, "{}", 2);
 }
 
 int establishConnection(char *serverip, int port) {
@@ -82,21 +81,39 @@ int main(int argc, char *argv []) {
  timestamp_t benchmark0, benchmark1;
  double secs;
  
+ fd_set fds;
+ struct timeval tv;
+ tv.tv_sec = 3; // 3 second timeout
+ tv.tv_usec = 0;
+ int rval;
+ 
  benchmark0 = timestamp();
  test1(connection);
- benchmark1 = timestamp();
- secs = (benchmark1 - benchmark0) / 1000.0L;
- printf("[+] Test 1 (HTTP) took %0.5f milliseconds.\n", secs);
- 
+ FD_ZERO(&fds);
+ FD_SET(connection, &fds);
+ rval = select(connection+1, &fds, NULL, NULL, &tv);
+ if (rval < 0) printf("[-] Test 1 (HTTP) failed.\n");
+ else {
+  benchmark1 = timestamp();
+  secs = (benchmark1 - benchmark0) / 1000.0L;
+  if ((secs+1) > 3000) printf("[-] Test 1 (HTTP) timed out.\n");
+  else printf("[+] Test 1 (HTTP) took %0.5f milliseconds.\n", secs);
+ }
  close(connection);
  if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
  benchmark0 = timestamp();
  test2(connection);
- benchmark1 = timestamp();
- secs = (benchmark1 - benchmark0) / 1000.0L;
- printf("[+] Test 2 (TN)   took %0.5f milliseconds.\n", secs);
-
+ FD_ZERO(&fds);
+ FD_SET(connection, &fds);
+ rval = select(connection+1, &fds, NULL, NULL, &tv);
+ if (rval < 0) printf("[-] Test 2 (TN)   failed.\n");
+ else {
+  benchmark1 = timestamp();
+  secs = (benchmark1 - benchmark0) / 1000.0L;
+  if ((secs+1) > 3000) printf("[-] Test 2 (TN)   timed out.\n");
+  else printf("[+] Test 2 (TN)   took %0.5f milliseconds.\n", secs);
+ }
  close(connection);
  return 0;
 }
