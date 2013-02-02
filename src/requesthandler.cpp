@@ -54,6 +54,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     sprintf(buffer, "{\"type\": \"error\", \"msg\": \"HTTP Error %d\"}", request.status);
     outputHTTP(connection, &request, (const char*)&buffer);
    }
+   usleep(REQUEST_TIMEOUT_SEND*1000000);
   } else if (request.type == TN) {
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] This is a TN request.\n");
@@ -67,6 +68,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] Answered to request with TN.\n");
+   usleep(REQUEST_TIMEOUT_SEND*1000000);
    #endif
   } else printf("[WARN ] [request] Unknown request type, killing request.\n");
  } else printf("[WARN ] [request] Couldn't handle request, killing it.\n");
@@ -124,7 +126,7 @@ bool RequestHandler::handle(int connection) {
  struct timeval tv;
  
  // Timeout
- tv.tv_sec = REQUEST_TIMEOUT;
+ tv.tv_sec = REQUEST_TIMEOUT_RECV;
  tv.tv_usec = 0;
  
  do {
@@ -167,8 +169,6 @@ bool RequestHandler::outputHTTP(int connection, Request *request, const char *co
  s_writeline(connection, buffer, strlen(buffer));
  s_writeline(connection, "\r\n", 2);
  s_writeline(connection, content, strlen(content));
- 
- usleep(1000000); // FIXME: This is a quickfix, it should be changed later
  
  return true;
 }

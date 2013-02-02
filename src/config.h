@@ -20,8 +20,9 @@
 #define CONFIG_H
 
 // User settings (change if you want to)
-#define PORT		1337
-#define REQUEST_TIMEOUT	5
+#define PORT			1337
+#define REQUEST_TIMEOUT_RECV	3
+#define REQUEST_TIMEOUT_SEND	3
 
 // System settings/limits (do not change if you don't know what you're doing)
 #define LISTENQ		100
