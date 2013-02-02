@@ -49,7 +49,11 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
     #endif
-   } //else Return_Error_Msg(conn, &request); // TODO
+   } else {
+    char buffer[32];
+    sprintf(buffer, "{\"type\": \"error\", \"msg\": \"HTTP Error %d\"}", request.status);
+    outputHTTP(connection, &request, (const char*)&buffer);
+   }
   } else if (request.type == TN) {
    #ifdef DEBUG
    printf("[DEBUG] [request_tn] This is a TN request.\n");
