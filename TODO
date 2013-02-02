@@ -2,3 +2,4 @@
  * Read through code and improve performance, restructure if needed
  * SSL
  * Add BaseAPI class for the base functions the API should have and extend the API class on that
+ * Instead of usleep, wait for the client to close the connection. If it doesn't do that within 3-10 seconds, automatically close the connection (timeout).
