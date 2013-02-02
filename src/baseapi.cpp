@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  api.cpp
+ *       Filename:  baseapi.cpp
  *
- *    Description:  API sources
+ *    Description:  BaseAPI sources
  *
  *        Version:  0.1
- *        Created:  01/02/13 20:32:51
+ *        Created:  02/02/13 17:47:34
  *       Revision:  none
  *       Compiler:  gcc
  *
