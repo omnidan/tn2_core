@@ -20,6 +20,8 @@
 #include "api.h"
 
 /* API: Constructor */
-API::API(Json::Value jRoot) {
- result = "{}"; // Set result, the requesthandler will get this.
+API::API(Json::Value jVal) {
+ initJSON(jVal);
+ if (get("test") != false) setResult("{'test': true}");
+ else setResult("{}"); // Set result, the requesthandler will get this.
 }

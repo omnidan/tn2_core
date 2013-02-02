@@ -26,7 +26,12 @@
 #include "json/json.h"
 
 class BaseAPI {
+private:
+ Json::Value jRoot;
 public:
+ void initJSON(Json::Value);
+ Json::Value get(const char *);
+ void setResult(const char *);
  std::string result;
 };
 
