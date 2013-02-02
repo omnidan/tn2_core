@@ -89,7 +89,6 @@ int Socket::loop() {
   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { printf("[WARN ] [socket] Couldn't accept connection.\n"); continue; }
   
   // New connection, fork a new process
-  // TODO: Check if a fork limit is needed here
   if ((pid=fork()) == 0) newconn();
   
   // Automatically kill finished processes
