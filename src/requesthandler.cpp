@@ -39,14 +39,13 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Status 200, returning result.\n");
     #endif
-    /*if (parseJSON()) {
+    if (parseJSON()) {
      API api = API(jRoot);
      #ifdef DEBUG
      printf("[DEBUG] [request_api] Got API result(%lu): %s\n", strlen(api.result.c_str()), api.result.c_str());
      #endif
      outputHTTP(connection, &request, api.result.c_str());
     } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
-    */outputHTTP(connection, &request, "{}");
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
     #endif
