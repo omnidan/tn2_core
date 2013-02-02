@@ -79,7 +79,12 @@ bool RequestHandler::parseJSON() {
  #ifdef DEBUG
  std::cout << "[DEBUG] [request_json] Got data: " << data << "\n";
  #endif
- if (!jReader.parse(data, jRoot, false)) { printf("[WARN ] [request_json] Invalid JSON.\n"); return false; }
+ if (!jReader.parse(data, jRoot, false)) {
+  #ifdef DEBUG
+  printf("[DEBUG] [request_json] Invalid JSON (%s).\n", data);
+  #endif
+  return false;
+ }
  else return true;
 }
 
