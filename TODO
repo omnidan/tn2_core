@@ -1,5 +1,4 @@
  * Make everything more C++-like (at the moment, it's a lot C-like)
  * Read through code and improve performance, restructure if needed
- * Connections to the internet fail
  * SSL
  * Add BaseAPI class for the base functions the API should have and extend the API class on that
