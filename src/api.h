@@ -19,18 +19,13 @@
 #ifndef API_H
 #define	API_H
 
-#include "config.h"
-
-// Standard headers
-#include <iostream>
-
 // Internal headers
-#include "json/json.h"
+#include "config.h"
+#include "baseapi.h"
 
-class API {
+class API : public BaseAPI {
 public:
  API(Json::Value);
- std::string result;
 };
 
 #endif /* API_H */

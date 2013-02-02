@@ -81,7 +81,7 @@ bool RequestHandler::parseJSON() {
  #endif
  if (!jReader.parse(data, jRoot, false)) {
   #ifdef DEBUG
-  printf("[DEBUG] [request_json] Invalid JSON (%s).\n", data);
+  printf("[DEBUG] [request_json] Invalid JSON (%s).\n", data.c_str());
   #endif
   return false;
  }

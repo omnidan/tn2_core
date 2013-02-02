@@ -1,6 +1,6 @@
 EXECUTABLE=bin/tnreq
 EXECUTABLE_CLIENT=bin/apicli
-SOURCES=src/main.cpp src/socket.cpp src/etc.cpp src/requesthandler.cpp src/json/json.cpp src/api.cpp
+SOURCES=src/main.cpp src/socket.cpp src/etc.cpp src/requesthandler.cpp src/json/json.cpp src/baseapi.cpp src/api.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 SOURCES_CLIENT=src/main_client.cpp src/etc.cpp
 OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)
