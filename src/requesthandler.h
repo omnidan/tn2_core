@@ -51,7 +51,7 @@ private:
  char *clientip;
  void InitRequest(Request *);
  void FreeRequest(Request *);
- bool outputHTTPHeader(int, Request *);
+ bool outputHTTP(int, Request *, const char *);
  bool parseHTTPHeader(char *, Request *);
  bool parseJSON();
 public:

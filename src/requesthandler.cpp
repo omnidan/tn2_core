@@ -39,14 +39,13 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Status 200, returning result.\n");
     #endif
-    outputHTTPHeader(connection, &request);
     if (parseJSON()) {
      API api = API(jRoot);
      #ifdef DEBUG
      printf("[DEBUG] [request_api] Got API result(%lu): %s\n", strlen(api.result.c_str()), api.result.c_str());
      #endif
-     s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
-    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
+     outputHTTP(connection, &request, api.result.c_str());
+    } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
     #ifdef DEBUG
     printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
     #endif
@@ -148,18 +147,17 @@ bool RequestHandler::handle(int connection) {
  return true; // Successfully processed
 }
 
-bool RequestHandler::outputHTTPHeader(int connection, Request *request) {
- char buffer[100];
+bool RequestHandler::outputHTTP(int connection, Request *request, const char *content) {
+ char buffer[32];
  
  sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
  s_writeline(connection, buffer, strlen(buffer));
- s_writeline(connection, "Server: TNREQ v0.2\r\n", 22);
+ s_writeline(connection, "Server: TNREQ/0.2\r\n", 19);
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
+ sprintf(buffer, "Content-Length: %lu\r\n", strlen(content));
+ s_writeline(connection, buffer, strlen(buffer));
  s_writeline(connection, "\r\n", 2);
- 
- #ifdef DEBUG
- printf("[DEBUG] [request_http] HTTP headers forged and sent.\n");
- #endif
+ s_writeline(connection, content, strlen(content));
  
  return true;
 }
