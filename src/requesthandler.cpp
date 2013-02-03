@@ -30,7 +30,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
  // Handle request and check request type
  if (handle(connection) == true) {
   #ifdef DEBUG
-  std::cout << "[DEBUG] [request] handle() returned true, continuing!" << std::endl;
+  std::cout << "[DEBUG] [request     ] handle() returned true, continuing!" << std::endl;
   #endif
   if (request.type == HTTP) {
    #ifdef DEBUG
@@ -43,7 +43,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     if (parseJSON()) {
      API api = API(jRoot);
      #ifdef DEBUG
-     std::cout << "[DEBUG] [request_api] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl;
+     std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl;
      #endif
      outputHTTP(connection, &request, api.result.c_str());
     } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
@@ -58,21 +58,21 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    usleep(REQUEST_TIMEOUT_SEND*1000000);
   } else if (request.type == TN) {
    #ifdef DEBUG
-   std::cout << "[DEBUG] [request_tn] This is a TN request." << std::endl;
+   std::cout << "[DEBUG] [request_tn  ] This is a TN request." << std::endl;
    #endif
    if (parseJSON()) {
     API api = API(jRoot);
     #ifdef DEBUG
-    std::cout << "[DEBUG] [request_api] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl; 
+    std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl; 
     #endif
     s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
-   std::cout << "[DEBUG] [request_tn] Answered to request with TN." << std::endl;
+   std::cout << "[DEBUG] [request_tn  ] Answered to request with TN." << std::endl;
    usleep(REQUEST_TIMEOUT_SEND*1000000);
    #endif
-  } else std::cout << "[WARN ] [request] Unknown request type, killing request." << std::endl;
- } else std::cout << "[WARN ] [request] Couldn't handle request, killing it." << std::endl;
+  } else std::cout << "[WARN ] [request     ] Unknown request type, killing request." << std::endl;
+ } else std::cout << "[WARN ] [request     ] Couldn't handle request, killing it." << std::endl;
 }
 
 /* parseJSON: JSON parser */
@@ -97,7 +97,7 @@ RequestHandler::~RequestHandler() {
  //FreeRequest(&request);
  
  #ifdef DEBUG
- std::cout << "[DEBUG] [request] Destructed RequestHandler." << std::endl;
+ std::cout << "[DEBUG] [request     ] Destructed RequestHandler." << std::endl;
  #endif
 }
 
@@ -107,7 +107,7 @@ void RequestHandler::InitRequest(Request *request) {
  request->method = UNSUPPORTED;
  request->resource = NULL;
  #ifdef DEBUG
- std::cout << "[DEBUG] [request] Initialised request." << std::endl;
+ std::cout << "[DEBUG] [request     ] Initialised request." << std::endl;
  #endif
 }
 
@@ -115,7 +115,7 @@ void RequestHandler::InitRequest(Request *request) {
 void RequestHandler::FreeRequest(Request *request) {
  if (request->resource) delete request->resource;
  #ifdef DEBUG
- std::cout << "[DEBUG] [request] Free'd request." << std::endl;
+ std::cout << "[DEBUG] [request     ] Free'd request." << std::endl;
  #endif
 }
 
@@ -137,7 +137,7 @@ bool RequestHandler::handle(int connection) {
   
   rval = select(connection+1, &fds, NULL, NULL, &tv); // Select from request
   
-  if (rval < 0) std::cout << "[WARN ] [request_handle] Couldn't select from request." << std::endl;
+  if (rval < 0) std::cout << "[WARN ] [request     ] Couldn't select from request." << std::endl;
   else if (rval == 0) return false; // Timeout, kill request
   else {
    s_readline(connection, buffer, MAX_REQ_LINE - 1);

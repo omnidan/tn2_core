@@ -61,7 +61,7 @@ ssize_t s_readline(int sockd, void *vptr, size_t maxlen) {
    else break;
   } else {
    if (errno == EINTR) continue;
-   else { std::cout << "[WARN ] [s_readline] Socket error " << errno << std::endl; return 0; }
+   else { std::cout << "[WARN ] [s_readline  ] Socket error " << errno << std::endl; return 0; }
   }
  }
  
@@ -81,7 +81,7 @@ ssize_t s_writeline(int sockd, void const *vptr, size_t n) {
  while (nleft > 0) {
   if ((nwritten = write(sockd, buffer, nleft)) <= 0) {
    if (errno == EINTR) nwritten = 0;
-   else { std::cout << "[WARN ] [s_writeline] Socket error " << errno << std::endl; return 0; }
+   else { std::cout << "[WARN ] [s_writeline ] Socket error " << errno << std::endl; return 0; }
   }
   nleft -= nwritten;
   buffer += nwritten;

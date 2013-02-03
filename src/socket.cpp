@@ -23,10 +23,10 @@
 Socket::Socket(int port) {
  // Create socket
  if ((tdata.listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-  std::cout << "[ERROR] [socket] Couldn't create socket." << std::endl;
+  std::cout << "[ERROR] [socket      ] Couldn't create socket." << std::endl;
   exit(EXIT_FAILURE);
  }
- std::cout << "[INFO ] [socket] Created socket at port " << port << "." << std::endl;
+ std::cout << "[INFO ] [socket      ] Created socket at port " << port << "." << std::endl;
  
  // Initialise sockaddr
  struct sockaddr_in sockaddr;
@@ -37,39 +37,39 @@ Socket::Socket(int port) {
   
  // Bind socket
  if (bind(tdata.listener, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0) {
-  std::cout << "[ERROR] [socket] Couldn't bind to socket." << std::endl;
+  std::cout << "[ERROR] [socket      ] Couldn't bind to socket." << std::endl;
   exit(EXIT_FAILURE);
  }
  #ifdef DEBUG
- std::cout << "[DEBUG] [socket] Bound to socket." << std::endl;
+ std::cout << "[DEBUG] [socket      ] Bound to socket." << std::endl;
  #endif
  
  // Listen to socket
  if (listen(tdata.listener, LISTENQ) < 0) {
-  std::cout << "[ERROR] [socket] Couldn't listen to socket." << std::endl;
+  std::cout << "[ERROR] [socket      ] Couldn't listen to socket." << std::endl;
   exit(EXIT_FAILURE);
  }
  #ifdef DEBUG
- std::cout << "[DEBUG] [socket] Listening to socket." << std::endl;
+ std::cout << "[DEBUG] [socket      ] Listening to socket." << std::endl;
  #endif
 }
 
 void Socket::newconn() {
  #ifdef DEBUG
- std::cout << "[DEBUG] [child] New connection. Forked child process." << std::endl;
+ std::cout << "[DEBUG] [child       ] New connection. Forked child process." << std::endl;
  #endif
  if ((tdata.cip = inet_ntoa(tdata.client.sin_addr)) < 0) {
-  std::cout << "[ERROR] [child] Failed to get peer address." << std::endl;
+  std::cout << "[ERROR] [child       ] Failed to get peer address." << std::endl;
   exit(EXIT_FAILURE);
  } 
  #ifdef DEBUG
- std::cout << "[DEBUG] [child] Peer address: " << tdata.cip << std::endl;
+ std::cout << "[DEBUG] [child       ] Peer address: " << tdata.cip << std::endl;
  #endif
- if (close(tdata.listener) < 0) std::cout << "[WARN ] [child] Couldn't close socket." << std::endl;
+ if (close(tdata.listener) < 0) std::cout << "[WARN ] [child       ] Couldn't close socket." << std::endl;
  RequestHandler(tdata.connection, tdata.cip); // Initialise request handler
- if (close(tdata.connection) < 0) std::cout << "[WARN ] [child] Couldn't close connection." << std::endl;
+ if (close(tdata.connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
  #ifdef DEBUG
- std::cout << "[DEBUG] [child] Connection closed. Killing child process." << std::endl;
+ std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
  #endif
  exit(EXIT_SUCCESS); // Kill child process
 }
@@ -84,7 +84,7 @@ int Socket::loop() {
  
  while (true) {
   // Accept connection if available
-  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { std::cout << "[WARN ] [socket] Couldn't accept connection." << std::endl; continue; }
+  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl; continue; }
   
   // New connection, fork a new process
   if ((pid=fork()) == 0) newconn();
@@ -94,7 +94,7 @@ int Socket::loop() {
   signal(SIGCHLD, SIG_IGN);
   
   // Cleanup
-  if (close(tdata.connection) < 0) { std::cout << "[WARN ] [socket] Couldn't close connection." << std::endl; continue; }
+  if (close(tdata.connection) < 0) { std::cout << "[WARN ] [socket      ] Couldn't close connection." << std::endl; continue; }
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent
