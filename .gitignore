@@ -1,4 +1,5 @@
-bin/tnreq
-bin/apicli
-bin/tnreq_debug
-bin/apicli_debug
+bin/tn2_core
+bin/tn2_benchmark
+bin/tn2_core_dbg
+bin/tn2_benchmark_dbg
+*.swp
