@@ -37,7 +37,7 @@ static timestamp_t timestamp() {
 
 void test1(int connection) {
  s_writeline(connection, "GET /%7B%7D HTTP/1.1\r\n", 22); // %7B%7D is the URI encoded version of {}
- s_writeline(connection, "User-Agent: apicli/0.2\r\n", 24);
+ s_writeline(connection, "User-Agent: tn2_benchmark/1.0\r\n", 24);
  s_writeline(connection, "Host: 127.0.0.1\r\n", 17);
  s_writeline(connection, "Accept: */*", 11);
  s_writeline(connection, "\r\n", 2);

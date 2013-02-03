@@ -8,7 +8,7 @@
  *        Version:  1.0
  *        Created:  27/01/13 20:55:15
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++
  *
  *         Author:  Daniel Bugl <Daniel.Bugl@touchlay.com>
  *   Organization:  TouchLay
