@@ -1,6 +1,7 @@
 1.0
  * Make everything more C++-like (at the moment, it's a lot C-like)
  * Read through code and improve performance, restructure if needed
+ * Improve Makefile
 
 1.1
  * Instead of usleep, wait for the client to close the connection. If it doesn't do that within 3-10 seconds, automatically close the connection (timeout).
