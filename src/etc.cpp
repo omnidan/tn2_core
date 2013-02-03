@@ -5,7 +5,7 @@
  *
  *    Description:  Additional functions
  *
- *        Version:  0.2
+ *        Version:  1.0
  *        Created:  28/01/13 22:18:03
  *       Revision:  none
  *       Compiler:  g++
@@ -61,7 +61,7 @@ ssize_t s_readline(int sockd, void *vptr, size_t maxlen) {
    else break;
   } else {
    if (errno == EINTR) continue;
-   return 0; // Some error happened, TODO: Handle this error
+   else { std::cout << "[WARN ] [s_writeline] Socket error " << errno << std::endl; return 0; }
   }
  }
  
@@ -81,7 +81,7 @@ ssize_t s_writeline(int sockd, void const *vptr, size_t n) {
  while (nleft > 0) {
   if ((nwritten = write(sockd, buffer, nleft)) <= 0) {
    if (errno == EINTR) nwritten = 0;
-   else return 0; // Some error happened, TODO: Handle this error
+   else { std::cout << "[WARN ] [s_writeline] Socket error " << errno << std::endl; return 0; }
   }
   nleft -= nwritten;
   buffer += nwritten;

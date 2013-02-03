@@ -5,7 +5,7 @@
  *
  *    Description:  Main file for the client
  *
- *        Version:  0.2
+ *        Version:  1.0
  *        Created:  29/01/13 20:47:42
  *       Revision:  none
  *       Compiler:  g++
@@ -15,10 +15,10 @@
  *
  * =====================================================================================
  */
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+
+// Includes
+#include <iostream>
+#include <strings.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -60,7 +60,7 @@ int establishConnection(char *serverip, int port) {
  servAddr.sin_port = htons(PORT);
  
  if (connect(connection, (struct sockaddr*)&servAddr, sizeof(struct sockaddr)) < 0) {
-  printf("[-] Connection to %s failed.\n", serverip);
+  std::cout << "[-] Connection to " << serverip << " failed." << std::endl;
   return -1;
  }
  return connection;
@@ -70,13 +70,13 @@ int main(int argc, char *argv []) {
  char *serverip;
  int connection;
  if (argc < 2) {
-  printf("[~] No IP address as argument provided, assuming 127.0.0.1\n");
+  std::cout << "[~] No IP address as argument provided, assuming 127.0.0.1" << std::endl;
   serverip = (char *)"127.0.0.1";
  } else serverip = (char *)argv[1];
  
  if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
- printf("[~] Connected to %s... Starting benchmarks.\n", serverip);
+ std::cout << "[~] Connected to " << serverip << "... Starting benchmarks." << std::endl;
  
  timestamp_t benchmark0, benchmark1, benchmark2;
  
@@ -92,13 +92,14 @@ int main(int argc, char *argv []) {
  FD_ZERO(&fds);
  FD_SET(connection, &fds);
  rval = select(connection+1, &fds, NULL, NULL, &tv);
- if (rval < 0) printf("[-] Test 1 (HTTP) failed.\n");
+ if (rval < 0) std::cout << "[-] Test 1 (HTTP) failed." << std::endl;
  else {
   benchmark2 = timestamp();
-  if ((((benchmark2-benchmark1)/1000.0L)+1) > 3000) printf("[-] Test 1 (HTTP) : Timeout.\n");
-  else printf("[+] Test 1 (HTTP) : Send: %0.5f milliseconds, Recv: %0.5f milliseconds.\n", (double)((benchmark1-benchmark0)/1000.0L), (double)((benchmark2-benchmark1)/1000.0L));
+  if ((((benchmark2-benchmark1)/1000.0L)+1) > 3000) std::cout << "[-] Test 1 (HTTP) : Timeout." << std::endl;
+  else std::cout << "[+] Test 1 (HTTP) : Send: " << (double)((benchmark1-benchmark0)/1000.0L) << " milliseconds, Recv: " << (double)((benchmark2-benchmark1)/1000.0L) << " milliseconds." << std::endl;
  }
  close(connection);
+ 
  if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
  benchmark0 = timestamp();
@@ -107,11 +108,11 @@ int main(int argc, char *argv []) {
  FD_ZERO(&fds);
  FD_SET(connection, &fds);
  rval = select(connection+1, &fds, NULL, NULL, &tv);
- if (rval < 0) printf("[-] Test 2 (TN)   failed.\n");
+ if (rval < 0) std::cout << "[-] Test 2 (TN)   failed." << std::endl;
  else {
   benchmark2 = timestamp();
-  if ((((benchmark2-benchmark1)/1000.0L)+1) > 3000) printf("[-] Test 2 (TN)   : Timeout.\n");
-  else printf("[+] Test 2 (TN)   : Send: %0.5f milliseconds, Recv: %0.5f milliseconds.\n", (double)((benchmark1-benchmark0)/1000.0L), (double)((benchmark2-benchmark1)/1000.0L));
+  if ((((benchmark2-benchmark1)/1000.0L)+1) > 3000) std::cout << "[-] Test 2 (TN)   : Timeout." << std::endl;
+  else std::cout << "[+] Test 2 (TN)   : Send: " << (double)((benchmark1-benchmark0)/1000.0L) << " milliseconds, Recv: " << (double)((benchmark2-benchmark1)/1000.0L) << " milliseconds." << std::endl;
  }
  close(connection);
  return 0;

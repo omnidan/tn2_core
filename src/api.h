@@ -5,7 +5,7 @@
  *
  *    Description:  API headers
  *
- *        Version:  0.1
+ *        Version:  1.0
  *        Created:  01/02/13 20:30:49
  *       Revision:  none
  *       Compiler:  g++

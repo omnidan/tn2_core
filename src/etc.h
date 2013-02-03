@@ -5,7 +5,7 @@
  *
  *    Description:  Additional functions - headers
  *
- *        Version:  0.2
+ *        Version:  1.0
  *        Created:  28/01/13 22:28:24
  *       Revision:  none
  *       Compiler:  g++
@@ -26,7 +26,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include <assert.h>
 
 // For HTTP decoding
 const char HEX2DEC[256] =

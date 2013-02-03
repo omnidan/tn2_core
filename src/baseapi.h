@@ -5,7 +5,7 @@
  *
  *    Description:  BaseAPI headers
  *
- *        Version:  0.1
+ *        Version:  1.0
  *        Created:  02/02/13 16:46:33
  *       Revision:  none
  *       Compiler:  gcc

@@ -5,7 +5,7 @@
  *
  *    Description:  API sources
  *
- *        Version:  0.1
+ *        Version:  1.0
  *        Created:  01/02/13 20:32:51
  *       Revision:  none
  *       Compiler:  gcc
