@@ -35,4 +35,4 @@ This was an experiment to implement pthreads. Since it didn't make sense to use 
 License
 -------
 
-The tn2_core (TouchNet 2.X Core) source is licensed under BSD 4-clause license.
+The tn2_core (TouchNet 2.X Core) source is licensed under BSD 4-clause license. For further information please consult the LICENSE file.
