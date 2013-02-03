@@ -26,9 +26,7 @@ Socket::Socket(int port) {
   std::cout << "[ERROR] [socket] Couldn't create socket." << std::endl;
   exit(EXIT_FAILURE);
  }
- #ifdef DEBUG
- std::cout << "[DEBUG] [socket] Created socket." << std::endl;
- #endif
+ std::cout << "[INFO ] [socket] Created socket at port " << port << "." << std::endl;
  
  // Initialise sockaddr
  struct sockaddr_in sockaddr;
