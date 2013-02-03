@@ -36,7 +36,6 @@ void versioninfo(bool booting) {
  if (booting) std::cout << " booting..." << std::endl;
  else std::cout << " built at " << __DATE__ << ", " << __TIME__ << "." << std::endl;
  std::cout << "[INFO ] [main]  Copyright (c) 2013 Daniel Bugl <daniel.bugl@touchlay.com>" << std::endl;
- std::cout << "[INFO ] [main]  Copyright (c) 2013 TouchLay <support@touchlay.com>" << std::endl;
  if (!booting) {
   std::cout << "[INFO ] [main] Compilation configuration:" << std::endl;
   std::cout << "[INFO ] [main]  PORT=" << PORT << std::endl;
