@@ -5,7 +5,7 @@
  *
  *    Description:  Socket control headers
  *
- *        Version:  0.2
+ *        Version:  1.0
  *        Created:  27/01/13 20:56:23
  *       Revision:  none
  *       Compiler:  g++
@@ -33,15 +33,15 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+// Internal headers
+#include "requesthandler.h"
+
 typedef struct {
  int connection;
  int listener;
  sockaddr_in client;
  char *cip;
 } conndata;
-
-// Internal headers
-#include "requesthandler.h"
 
 class Socket {
 private:
