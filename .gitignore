@@ -3,3 +3,4 @@ bin/tn2_benchmark
 bin/tn2_core_dbg
 bin/tn2_benchmark_dbg
 *.swp
+*.o
