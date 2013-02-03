@@ -5,7 +5,7 @@
  *
  *    Description:  Handle requests
  *
- *        Version:  0.1
+ *        Version:  1.0
  *        Created:  28/01/13 21:47:34
  *       Revision:  none
  *       Compiler:  gcc
@@ -21,6 +21,7 @@
 
 /* RequestHandler: Constructor */
 RequestHandler::RequestHandler(int connection, char *cip) {
+ // TODO: Create a blacklist for IPs
  clientip = cip;
  
  // Initialise request
@@ -29,49 +30,49 @@ RequestHandler::RequestHandler(int connection, char *cip) {
  // Handle request and check request type
  if (handle(connection) == true) {
   #ifdef DEBUG
-  printf("[DEBUG] [request] handle() returned true, continuing!\n");
+  std::cout << "[DEBUG] [request] handle() returned true, continuing!" << std::endl;
   #endif
   if (request.type == HTTP) {
    #ifdef DEBUG
-   printf("[DEBUG] [request_http] This is an HTTP request.\n");
+   std::cout << "[DEBUG] [request_http] This is an HTTP request." << std::endl;
    #endif
    if (request.status == 200) {
     #ifdef DEBUG
-    printf("[DEBUG] [request_http] Status 200, returning result.\n");
+    std::cout << "[DEBUG] [request_http] Status 200, returning result." << std::endl;
     #endif
     if (parseJSON()) {
      API api = API(jRoot);
      #ifdef DEBUG
-     printf("[DEBUG] [request_api] Got API result(%lu): %s\n", strlen(api.result.c_str()), api.result.c_str());
+     std::cout << "[DEBUG] [request_api] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl;
      #endif
      outputHTTP(connection, &request, api.result.c_str());
     } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
     #ifdef DEBUG
-    printf("[DEBUG] [request_http] Answered to request with HTTP.\n");
+    std::cout << "[DEBUG] [request_http] Answered to request with HTTP." << std::endl;
     #endif
    } else {
-    char buffer[32];
-    sprintf(buffer, "{\"type\": \"error\", \"msg\": \"HTTP Error %d\"}", request.status);
-    outputHTTP(connection, &request, (const char*)&buffer);
+    std::stringstream sbuffer;
+    sbuffer << "{\"type\": \"error\", \"msg\": \"HTTP Error " << request.status << "\"}";
+    outputHTTP(connection, &request, sbuffer.str());
    }
    usleep(REQUEST_TIMEOUT_SEND*1000000);
   } else if (request.type == TN) {
    #ifdef DEBUG
-   printf("[DEBUG] [request_tn] This is a TN request.\n");
+   std::cout << "[DEBUG] [request_tn] This is a TN request." << std::endl;
    #endif
    if (parseJSON()) {
     API api = API(jRoot);
     #ifdef DEBUG
-    printf("[DEBUG] [request_api] Got API result(%lu): %s\n", strlen(api.result.c_str()), api.result.c_str());
+    std::cout << "[DEBUG] [request_api] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl; 
     #endif
     s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
-   printf("[DEBUG] [request_tn] Answered to request with TN.\n");
+   std::cout << "[DEBUG] [request_tn] Answered to request with TN." << std::endl;
    usleep(REQUEST_TIMEOUT_SEND*1000000);
    #endif
-  } else printf("[WARN ] [request] Unknown request type, killing request.\n");
- } else printf("[WARN ] [request] Couldn't handle request, killing it.\n");
+  } else std::cout << "[WARN ] [request] Unknown request type, killing request." << std::endl;
+ } else std::cout << "[WARN ] [request] Couldn't handle request, killing it." << std::endl;
 }
 
 /* parseJSON: JSON parser */
@@ -83,7 +84,7 @@ bool RequestHandler::parseJSON() {
  #endif
  if (!jReader.parse(data, jRoot, false)) {
   #ifdef DEBUG
-  printf("[DEBUG] [request_json] Invalid JSON (%s).\n", data.c_str());
+  std::cout << "[DEBUG] [request_json] Invalid JSON (" << data << ")." << std::endl;
   #endif
   return false;
  }
@@ -96,7 +97,7 @@ RequestHandler::~RequestHandler() {
  //FreeRequest(&request);
  
  #ifdef DEBUG
- printf("[DEBUG] [request] Destructed RequestHandler.\n");
+ std::cout << "[DEBUG] [request] Destructed RequestHandler." << std::endl;
  #endif
 }
 
@@ -106,7 +107,7 @@ void RequestHandler::InitRequest(Request *request) {
  request->method = UNSUPPORTED;
  request->resource = NULL;
  #ifdef DEBUG
- printf("[DEBUG] [request] Initialised request.\n");
+ std::cout << "[DEBUG] [request] Initialised request." << std::endl;
  #endif
 }
 
@@ -114,7 +115,7 @@ void RequestHandler::InitRequest(Request *request) {
 void RequestHandler::FreeRequest(Request *request) {
  if (request->resource) delete request->resource;
  #ifdef DEBUG
- printf("[DEBUG] [request] Free'd request.\n");
+ std::cout << "[DEBUG] [request] Free'd request." << std::endl;
  #endif
 }
 
@@ -136,7 +137,7 @@ bool RequestHandler::handle(int connection) {
   
   rval = select(connection+1, &fds, NULL, NULL, &tv); // Select from request
   
-  if (rval < 0) printf("[WARN ] [request_handle] Couldn't select from request.\n");
+  if (rval < 0) std::cout << "[WARN ] [request_handle] Couldn't select from request." << std::endl;
   else if (rval == 0) return false; // Timeout, kill request
   else {
    s_readline(connection, buffer, MAX_REQ_LINE - 1);
@@ -158,17 +159,18 @@ bool RequestHandler::handle(int connection) {
  return true; // Successfully processed
 }
 
-bool RequestHandler::outputHTTP(int connection, Request *request, const char *content) {
- char buffer[32];
+bool RequestHandler::outputHTTP(int connection, Request *request, std::string content) {
+ std::stringstream sbuffer;
  
- sprintf(buffer, "HTTP/1.1 %d OK\r\n", request->status);
- s_writeline(connection, buffer, strlen(buffer));
- s_writeline(connection, "Server: TNREQ/0.2\r\n", 19);
+ sbuffer << "HTTP/1.1 " << request->status << " OK\r\n";
+ s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
+ sbuffer << "Server: " << NAME << "/" << VERSION << "\r\n";
+ s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
- sprintf(buffer, "Content-Length: %lu\r\n", strlen(content));
- s_writeline(connection, buffer, strlen(buffer));
+ sbuffer << "Content-Length: " << strlen(content.c_str()) << "\r\n";
+ s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
  s_writeline(connection, "\r\n", 2);
- s_writeline(connection, content, strlen(content));
+ s_writeline(connection, content.c_str(), strlen(content.c_str()));
  
  return true;
 }

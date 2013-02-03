@@ -5,7 +5,7 @@
  *
  *    Description:  Request handler headers
  *
- *        Version:  0.2
+ *        Version:  1.0
  *        Created:  27/01/13 21:48:26
  *       Revision:  none
  *       Compiler:  g++
@@ -22,6 +22,8 @@
 #include "config.h"
 
 // Standard headers
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -52,7 +54,7 @@ private:
  char *clientip;
  void InitRequest(Request *);
  void FreeRequest(Request *);
- bool outputHTTP(int, Request *, const char *);
+ bool outputHTTP(int, Request *, std::string);
  bool parseHTTPHeader(char *, Request *);
  bool parseJSON();
 public:
