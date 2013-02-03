@@ -7,7 +7,7 @@ OBJECTS_CLIENT=$(SOURCES_CLIENT:.cpp=.o)
 CPP=g++
 FLAGS=-ansi -pedantic -Wall -s -O3 -Werror
 LDFLAGS=
-DEBUG_FLAGS=-g -lm -Wall
+DEBUG_FLAGS=-g -lm -Wall -DDEBUG
 
 all: clean $(EXECUTABLE) $(EXECUTABLE_CLIENT) $(EXECUTABLE)_dbg $(EXECUTABLE_CLIENT)_dbg
 

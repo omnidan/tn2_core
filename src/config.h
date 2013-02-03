@@ -33,6 +33,6 @@
 
 
 // Switch settings (can be turned on/off)
-#define DEBUG // Debug setting, comment to disable debug messages, uncomment to enable.
+// #define DEBUG // Debug setting, enable by compiling with -DDEBUG
 
 #endif /* CONFIG_H */
