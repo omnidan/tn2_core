@@ -87,6 +87,8 @@ int Socket::loop() {
   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl; continue; }
   
   // New connection, fork a new process
+  // Main process uses 1192 KB RAM - Every fork uses 644 KB RAM (on the debug version)
+  // TODO: Limit forks to 1000 by default (~70MB RAM max in total)
   if ((pid=fork()) == 0) newconn();
   
   // Automatically kill finished processes
