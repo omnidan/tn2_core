@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/resource.h>
 
 // Internal headers
 #include "config.h"
@@ -79,6 +80,11 @@ int main(int argc, char *argv []) {
  
  // Print info messages
  versioninfo(true);
+ 
+ // Set the child/process limit
+ struct rlimit plimit = {CHILD_LIMIT_SOFT, CHILD_LIMIT_HARD};
+ if (prlimit(getpid(), RLIMIT_NPROC, &plimit, NULL) == -1) std::cout << "[WARN ] [main        ] Couldn't set the process limit. This can be dangerous and result in an OOM if there is no other (external) limit set." << std::endl;
+ 
  
  Socket *socket = new Socket(port); // Initialise socket
  return socket->loop(); // Exit with the return value from the loop

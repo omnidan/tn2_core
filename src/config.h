@@ -24,13 +24,15 @@
 #define NAME		"tn2_core"
 #define VERSION		"1.0b"
 #define VERSION_TAG	"BETA"
+#define CHILD_LIMIT	10
 
 // System settings/limits (do not change if you don't know what you're doing)
 #define LISTENQ			100
 #define MAX_REQ_LINE		1024
 #define REQUEST_TIMEOUT_RECV	3
 #define REQUEST_TIMEOUT_SEND	3
-
+#define CHILD_LIMIT_SOFT	CHILD_LIMIT-1
+#define CHILD_LIMIT_HARD	CHILD_LIMIT
 
 // Switch settings (can be turned on/off)
 // #define DEBUG // Debug setting, enable by compiling with -DDEBUG

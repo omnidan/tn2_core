@@ -89,6 +89,9 @@ int Socket::loop() {
   // New connection, fork a new process
   // Main process uses 1192 KB RAM - Every fork uses 644 KB RAM (on the debug version)
   // TODO: Limit forks to 1000 by default (~70MB RAM max in total)
+  pid = fork();
+  if (pid == 0) newconn();
+  else if (pid < 0) std::cout << "[WARN ] [child       ] Failed to fork. (Child limit reached?)" << std::endl;
   if ((pid=fork()) == 0) newconn();
   
   // Automatically kill finished processes
