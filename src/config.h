@@ -22,7 +22,7 @@
 // User settings (change if you want to)
 #define PORT		1337
 #define NAME		"tn2_core"
-#define VERSION		"1.0b"
+#define VERSION		"1.1b"
 #define VERSION_TAG	"BETA"
 
 // System settings/limits (do not change if you don't know what you're doing)

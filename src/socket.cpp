@@ -70,9 +70,14 @@ Socket::Socket(int port) {
 void *newconn(void *ptr) {
  conndata *tdata;
  tdata = (conndata *)ptr;
+ 
+ // Deallocate resources upon return
+ if ((pthread_detach(pthread_self())) < 0) std::cout << "[WARN ] [child       ] Couldn't detach thread." << std::endl;
+ 
  #ifdef DEBUG
  std::cout << "[DEBUG] [child       ] New connection. Forked child process." << std::endl;
  #endif
+ 
  if ((tdata->cip = inet_ntoa(tdata->client.sin_addr)) < 0) {
   std::cout << "[ERROR] [child       ] Failed to get peer address." << std::endl;
   pthread_exit(0);
@@ -80,11 +85,11 @@ void *newconn(void *ptr) {
  #ifdef DEBUG
  std::cout << "[DEBUG] [child       ] Peer address: " << tdata->cip << std::endl;
  #endif
- //if (close(tdata->listener) < 0) std::cout << "[WARN ] [child       ] Couldn't close socket." << std::endl;
+ 
  RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
  if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
  #ifdef DEBUG
- std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
+ else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
  #endif
  pthread_exit(0); // Kill child process
 }
@@ -104,15 +109,17 @@ int Socket::loop() {
   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) {
    if (errno == EWOULDBLOCK) continue; // No connection available, just continue to check.
    else {
-    std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl;
+    std::cout << "[WARN ] [socket      ] Couldn't accept connection. (ERRNO: " << errno << ")" << std::endl;
+    usleep(1000000);
     continue;
    }
   }
   
   // New connection, create a new thread
   pthread_create(&thread, NULL, newconn, (void *)&tdata);
-  pthread_join(thread, NULL);
-  pthread_cancel(thread);
+  //pthread_join(thread, NULL);
+  //pthread_cancel(thread);
+  //close(tdata.connection);
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent
