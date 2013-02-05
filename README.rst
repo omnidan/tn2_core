@@ -27,10 +27,21 @@ core
 
 The core branch is like the core of the core, also the latest stable version, and excludes the specific TN2 API.
 
-threads
+testing
 ~~~~~~~
 
-This was an experiment to implement pthreads. Since it didn't make sense to use pthreads over fork() in this case, though, it was made a seperate branch and stopped being developed on.
+This is the experimental branch for tn2_core. The threads branch has been deleted because I started working on threads instead of subprocesses again in testing.
+
+forklimit
+~~~~~~~~~
+
+This was an experiment to implement limits for fork()
+
+1.0
+~~~
+
+Version 1.0 release of tn2_core.
+
 
 License
 -------
