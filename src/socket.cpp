@@ -67,7 +67,7 @@ void *newconn(void *ptr) {
  #ifdef DEBUG
  std::cout << "[DEBUG] [child       ] Peer address: " << tdata->cip << std::endl;
  #endif
- if (close(tdata->listener) < 0) std::cout << "[WARN ] [child       ] Couldn't close socket." << std::endl;
+ //if (close(tdata->listener) < 0) std::cout << "[WARN ] [child       ] Couldn't close socket." << std::endl;
  RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
  if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
  #ifdef DEBUG
@@ -83,18 +83,17 @@ int Socket::loop() {
  client.sin_family = AF_INET;
  socklen_t clen = sizeof(client);
  tdata.cip = NULL;
- pthread_t thread;
  
  while (true) {
+  pthread_t thread;
+  
   // Accept connection if available
   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl; continue; }
   
   // New connection, create a new thread
   pthread_create(&thread, NULL, newconn, (void *)&tdata);
   pthread_join(thread, NULL);
-  
-  // Cleanup
-  if (close(tdata.connection) < 0) { std::cout << "[WARN ] [socket      ] Couldn't close connection." << std::endl; continue; }
+  pthread_cancel(thread);
  }
  
  return EXIT_FAILURE; // Something bad happened, exit parent
