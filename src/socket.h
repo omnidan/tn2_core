@@ -47,7 +47,6 @@ class Socket {
 private:
  conndata tdata;
  pid_t pid;
- void newconn();
 public:
  Socket(int);
  int loop();

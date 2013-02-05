@@ -54,24 +54,26 @@ Socket::Socket(int port) {
  #endif
 }
 
-void Socket::newconn() {
+void *newconn(void *ptr) {
+ conndata *tdata;
+ tdata = (conndata *)ptr;
  #ifdef DEBUG
  std::cout << "[DEBUG] [child       ] New connection. Forked child process." << std::endl;
  #endif
- if ((tdata.cip = inet_ntoa(tdata.client.sin_addr)) < 0) {
+ if ((tdata->cip = inet_ntoa(tdata->client.sin_addr)) < 0) {
   std::cout << "[ERROR] [child       ] Failed to get peer address." << std::endl;
-  exit(EXIT_FAILURE);
+  pthread_exit(0);
  } 
  #ifdef DEBUG
- std::cout << "[DEBUG] [child       ] Peer address: " << tdata.cip << std::endl;
+ std::cout << "[DEBUG] [child       ] Peer address: " << tdata->cip << std::endl;
  #endif
- if (close(tdata.listener) < 0) std::cout << "[WARN ] [child       ] Couldn't close socket." << std::endl;
- RequestHandler(tdata.connection, tdata.cip); // Initialise request handler
- if (close(tdata.connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
+ if (close(tdata->listener) < 0) std::cout << "[WARN ] [child       ] Couldn't close socket." << std::endl;
+ RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
+ if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
  #ifdef DEBUG
  std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
  #endif
- exit(EXIT_SUCCESS); // Kill child process
+ pthread_exit(0); // Kill child process
 }
 
 /* loop: Main loop for the socket */
@@ -81,19 +83,15 @@ int Socket::loop() {
  client.sin_family = AF_INET;
  socklen_t clen = sizeof(client);
  tdata.cip = NULL;
+ pthread_t thread;
  
  while (true) {
   // Accept connection if available
   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl; continue; }
   
-  // New connection, fork a new process
-  // Main process uses 1192 KB RAM - Every fork uses 644 KB RAM (on the debug version)
-  // TODO: Limit forks to 1000 by default (~70MB RAM max in total)
-  if ((pid=fork()) == 0) newconn();
-  
-  // Automatically kill finished processes
-  waitpid(-1, NULL, WNOHANG);
-  signal(SIGCHLD, SIG_IGN);
+  // New connection, create a new thread
+  pthread_create(&thread, NULL, newconn, (void *)&tdata);
+  pthread_join(thread, NULL);
   
   // Cleanup
   if (close(tdata.connection) < 0) { std::cout << "[WARN ] [socket      ] Couldn't close connection." << std::endl; continue; }
