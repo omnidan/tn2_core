@@ -24,8 +24,21 @@ Socket::Socket(int port) {
  // Create socket
  if ((tdata.listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
   std::cout << "[ERROR] [socket      ] Couldn't create socket." << std::endl;
+  close(tdata.listener);
   exit(EXIT_FAILURE);
  }
+ 
+ // Make the socket non-blocking
+ if ((fcntl(tdata.listener, F_SETFL, O_NONBLOCK)) < 0) {
+  std::cout << "[ERROR] [socket      ] Couldn't make the socket non-blocking." << std::endl;
+  close(tdata.listener);
+  exit(EXIT_FAILURE);
+ }
+ 
+ // Get rid of address already in use errors
+ int on = 1;
+ if ((setsockopt(tdata.listener, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on))) < 0) std::cout << "[WARN ] [socket      ] setsockopt failed, this isn't critical, continuing." << std::endl;
+ 
  std::cout << "[INFO ] [socket      ] Created socket at port " << port << "." << std::endl;
  
  // Initialise sockaddr
@@ -88,7 +101,13 @@ int Socket::loop() {
   pthread_t thread;
   
   // Accept connection if available
-  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) { std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl; continue; }
+  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) {
+   if (errno == EWOULDBLOCK) continue; // No connection available, just continue to check.
+   else {
+    std::cout << "[WARN ] [socket      ] Couldn't accept connection." << std::endl;
+    continue;
+   }
+  }
   
   // New connection, create a new thread
   pthread_create(&thread, NULL, newconn, (void *)&tdata);

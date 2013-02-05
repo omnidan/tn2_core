@@ -25,12 +25,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 // Network headers
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 // Internal headers
