@@ -1,5 +1,6 @@
  * Instead of usleep, wait for the client to close the connection. If it doesn't do that within 3-10 seconds, automatically close the connection (timeout). (requesthandler.cpp)
  * SSL (socket.cpp)
  * Improve the client (main_client.cpp)
- * Limit subprocess amount (look into socket.cpp)
+ * Limit thread amount (look into socket.cpp)
  * Create a blacklist for IPs (either requesthandler.cpp [core-specific] or api.cpp [api-specific])
+ * It seems like DDOS is possible now due to EMFILE. (socket.cpp/requesthandler.cpp)
