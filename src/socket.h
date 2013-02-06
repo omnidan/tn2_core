@@ -49,7 +49,9 @@ class Socket {
 private:
  conndata tdata;
  pid_t pid;
+ fd_set master;
  fd_set rfds;
+ int fdmax;
 public:
  Socket(int);
  int loop();

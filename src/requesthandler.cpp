@@ -93,9 +93,6 @@ bool RequestHandler::parseJSON() {
 
 /* ~RequestHandler: Destructor */
 RequestHandler::~RequestHandler() {
- // Free request data stored in ram
- //FreeRequest(&request);
- 
  #ifdef DEBUG
  std::cout << "[DEBUG] [request     ] Destructed RequestHandler." << std::endl;
  #endif
@@ -142,18 +139,51 @@ bool RequestHandler::handle(int connection) {
   else {
    s_readline(connection, buffer, MAX_REQ_LINE - 1);
    
+   #ifdef DEBUG
+   std::cout << "[DEBUG] [request     ] Received buffer: " << buffer << std::endl;
+   #endif
+   
    if (buffer[0] == '{') {
     request.type = TN;
     request.resource = buffer;
+    request.level = SIMPLE;
     return true;
    } else {
     request.type = HTTP;
     strim(buffer);
+    char *buf = buffer;
+    char *endptr = NULL;
+    int len;
+    if (!strncmp(buffer, "GET ", 4)) {
+     request.method = GET;
+     buf += 4;
+    } else if (!strncmp(buffer, "HEAD ", 5)) {
+     request.method = HEAD;
+     buf += 5;
+    } else {
+     request.method = UNSUPPORTED;
+     request.status = 501;
+     return true;
+    }
+    
+    while (*buf && isspace(*buf)) buf++; // Skip the start
+    
+    endptr = strchr(buf, ' ');
+    if (endptr == NULL) len = strlen(buf);
+    else len = endptr - buf;
+    
+    if (len == 0) {
+     request.status = 400;
+     return true;
+    }
+    
+    request.resource = (char *)calloc(len + 1, sizeof(char));
+    strncpy(request.resource, buf, len);
+    
+    request.level = SIMPLE;
+    
+    return true;
    }
-   
-   // HTTP stuff
-   if (buffer[0] == '\0') break; // End of HTTP headers
-   if (parseHTTPHeader(buffer, &request)) break; // Parse headers
   }
  } while (request.level != SIMPLE);
  return true; // Successfully processed
@@ -171,61 +201,6 @@ bool RequestHandler::outputHTTP(int connection, Request *request, std::string co
  s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
  s_writeline(connection, "\r\n", 2);
  s_writeline(connection, content.c_str(), strlen(content.c_str()));
- 
- return true;
-}
-
-bool RequestHandler::parseHTTPHeader(char *buffer, Request *request) {
- static bool first_line = true;
- char *temp = NULL;
- char *endptr = NULL;
- int len;
- if (first_line == true) {
-  if (!strncmp(buffer, "GET ", 4)) {
-   request->method = GET;
-   buffer += 4;
-  } else if (!strncmp(buffer, "HEAD ", 5)) {
-   request->method = HEAD;
-   buffer += 5;
-  } else {
-   request->method = UNSUPPORTED;
-   request->status = 501;
-   return false;
-  }
-  while (*buffer && isspace(*buffer)) buffer++; // Skip the start
-  endptr = strchr(buffer, ' ');
-  if (endptr == NULL) len = strlen(buffer);
-  else len = endptr - buffer;
-  
-  if (len == 0) {
-   request->status = 400;
-   return false;
-  }
-  
-  request->resource = (char *)calloc(len + 1, sizeof(char));
-  strncpy(request->resource, buffer, len);
-  
-  if (strstr(buffer, "HTTP/")) request->level = FULL;
-  else request->level = SIMPLE;
-  
-  first_line = 0;
-  return true;
- }
- 
- // More headers aside from the request line
- endptr = strchr(buffer, 58); // 58 is a : character
- if (endptr == NULL) {
-  request->status = 400;
-  return false;
- }
- 
- temp = (char *)calloc((endptr - buffer) + 1, sizeof(char));
- strncpy(temp, buffer, (endptr - buffer));
- stoupper(temp);
- 
- buffer = endptr + 1;
- while (*buffer && isspace(*buffer)) ++buffer;
- if (*buffer == '\0') return true;
  
  return true;
 }

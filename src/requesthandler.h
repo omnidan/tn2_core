@@ -52,6 +52,7 @@ private:
  Json::Reader jReader;
  Json::Value jRoot;
  char *clientip;
+ bool first_line;
  void InitRequest(Request *);
  void FreeRequest(Request *);
  bool outputHTTP(int, Request *, std::string);
