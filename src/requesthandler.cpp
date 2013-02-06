@@ -77,8 +77,9 @@ RequestHandler::RequestHandler(int connection, char *cip) {
 
 /* parseJSON: JSON parser */
 bool RequestHandler::parseJSON() {
- std::string data = request.resource;
- if (request.type == HTTP) data.erase(data.begin()); // Remove / prefix from the GET request
+ std::string data("");
+ if (request.resource != 0) data = request.resource;
+ if ((request.type == HTTP) && (data != "")) data.erase(data.begin()); // Remove / prefix from the GET request
  data = decodeURI(data);
  #ifdef DEBUG
  std::cout << "[DEBUG] [request_json] Got data: " << data << "\n";
