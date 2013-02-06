@@ -25,6 +25,9 @@ Socket::Socket(int port) {
  FD_ZERO(&master);
  FD_ZERO(&rfds);
  
+ // Prevent SIGPIPE from killing the server
+ signal(SIGPIPE, SIG_IGN);
+ 
  // Create socket
  if ((tdata.listener=socket(AF_INET, SOCK_STREAM, 0)) < 0) {
   std::cout << "[ERROR] [socket      ] Couldn't create socket." << std::endl;
@@ -129,8 +132,8 @@ int Socket::loop() {
     }
    } else {
     pthread_create(&thread, NULL, newconn, (void *)&tdata);
-    pthread_join(thread, NULL);
-    pthread_cancel(thread);
+    //pthread_join(thread, NULL);
+    //pthread_cancel(thread);
    }
   }
  }

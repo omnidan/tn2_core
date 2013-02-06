@@ -74,9 +74,19 @@ ssize_t s_writeline(int sockd, void const *vptr, size_t n) {
  size_t nleft;
  ssize_t nwritten;
  const char *buffer;
+ struct timeval tv;
+ tv.tv_sec = 0;
+ tv.tv_usec = 0;
  
  buffer = (const char *)vptr;
  nleft = n;
+ 
+ if ((select(sockd + 1, NULL, NULL, NULL, &tv)) < 0) {
+  #ifdef DEBUG
+  std::cout << "[DEBUG] [s_writeline ] Connection closed by peer." << std::endl;
+  #endif
+  return 0;
+ }
  
  while (nleft > 0) {
   if ((nwritten = write(sockd, buffer, nleft)) <= 0) {
