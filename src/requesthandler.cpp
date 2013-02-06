@@ -192,13 +192,18 @@ bool RequestHandler::handle(int connection) {
 bool RequestHandler::outputHTTP(int connection, Request *request, std::string content) {
  std::stringstream sbuffer;
  
- sbuffer << "HTTP/1.1 " << request->status << " OK\r\n";
+ if (request->status == 200) sbuffer << "HTTP/1.1 " << request->status << " OK\r\n";
+ else if (request->status == 400) sbuffer << "HTTP/1.1 " << request->status << " Bad Request\r\n";
+ else sbuffer << "HTTP/1.1 501 Not Implemented\r\n";
  s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
+ sbuffer.str(std::string());
  sbuffer << "Server: " << NAME << "/" << VERSION << "\r\n";
  s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
+ sbuffer.str(std::string());
  s_writeline(connection, "Content-Type: application/json\r\n", 32);
  sbuffer << "Content-Length: " << strlen(content.c_str()) << "\r\n";
  s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
+ sbuffer.str(std::string());
  s_writeline(connection, "\r\n", 2);
  s_writeline(connection, content.c_str(), strlen(content.c_str()));
  
