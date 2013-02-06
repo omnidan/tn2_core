@@ -30,7 +30,7 @@
 #define MAX_REQ_LINE		1024
 #define REQUEST_TIMEOUT_RECV	3
 #define REQUEST_TIMEOUT_SEND	3
-
+#define MAX_CONNECTIONS		10000
 
 // Switch settings (can be turned on/off)
 // #define DEBUG // Debug setting, enable by compiling with -DDEBUG

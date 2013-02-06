@@ -86,11 +86,11 @@ void *newconn(void *ptr) {
  std::cout << "[DEBUG] [child       ] Peer address: " << tdata->cip << std::endl;
  #endif
  
- RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
- if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
- #ifdef DEBUG
- else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
- #endif
+ //RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
+ //if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
+ //#ifdef DEBUG
+ //else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
+ //#endif
  pthread_exit(0); // Kill child process
 }
 
@@ -101,26 +101,37 @@ int Socket::loop() {
  client.sin_family = AF_INET;
  socklen_t clen = sizeof(client);
  tdata.cip = NULL;
+ pthread_t thread;
  
  while (true) {
-  pthread_t thread;
+  // Clear the socket set
+  FD_ZERO(&rfds);
   
-  // Accept connection if available
-  if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) {
-   if (errno == EWOULDBLOCK) continue; // No connection available, just continue to check.
-   else {
-    std::cout << "[WARN ] [socket      ] Couldn't accept connection. (ERRNO: " << errno << ")" << std::endl;
-    usleep(1000000);
-    continue;
+  // Add the listener to the set
+  FD_SET(tdata.listener, &rfds);
+  
+  // Wait for activities on the sockets, timeout NULL, so it waits forever
+  if (((select(MAX_CONNECTIONS+LISTENQ, &rfds, NULL, NULL, NULL)) < 0) && (errno != EINTR)) std::cout << "[WARN ] [socket      ] Couldn't select connection. (ERRNO: " << errno << ")" << std::endl;
+  
+  // Something happened on the listener socket, incoming connection
+  if (FD_ISSET(tdata.listener, &rfds)) { 
+   // Accept connection if available
+   if ((tdata.connection=accept(tdata.listener, (struct sockaddr*)&tdata.client, &clen)) < 0) {
+    if (errno == EWOULDBLOCK) continue; // No connection available, just continue to check.
+    else {
+     std::cout << "[WARN ] [socket      ] Couldn't accept connection. (ERRNO: " << errno << ")" << std::endl;
+     usleep(1000000);
+     continue;
+    }
    }
+   
+   // New connection, create a new thread
+   pthread_create(&thread, NULL, newconn, (void *)&tdata);
+   pthread_join(thread, NULL);
+   pthread_cancel(thread);
+   close(tdata.connection);
   }
-  
-  // New connection, create a new thread
-  pthread_create(&thread, NULL, newconn, (void *)&tdata);
-  //pthread_join(thread, NULL);
-  //pthread_cancel(thread);
-  //close(tdata.connection);
  }
- 
- return EXIT_FAILURE; // Something bad happened, exit parent
-}
+  
+  return EXIT_FAILURE; // Something bad happened, exit parent
+ }
