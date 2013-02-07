@@ -5,7 +5,7 @@
  *
  *    Description:  Handle requests
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  28/01/13 21:47:34
  *       Revision:  none
  *       Compiler:  g++
@@ -41,11 +41,12 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     std::cout << "[DEBUG] [request_http] Status 200, returning result." << std::endl;
     #endif
     if (parseJSON()) {
-     API api = API(jRoot);
+     API api = API();
+     std::string apiresult = api.init(jRoot, cip);
      #ifdef DEBUG
-     std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl;
+     std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(apiresult.c_str()) << "): " << apiresult << std::endl;
      #endif
-     outputHTTP(connection, &request, api.result.c_str());
+     outputHTTP(connection, &request, apiresult.c_str());
     } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
     #ifdef DEBUG
     std::cout << "[DEBUG] [request_http] Answered to request with HTTP." << std::endl;
@@ -61,11 +62,12 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    std::cout << "[DEBUG] [request_tn  ] This is a TN request." << std::endl;
    #endif
    if (parseJSON()) {
-    API api = API(jRoot);
+    API api = API();
+    std::string apiresult = api.init(jRoot, cip);
     #ifdef DEBUG
-    std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(api.result.c_str()) << "): " << api.result << std::endl; 
+    std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(apiresult.c_str()) << "): " << apiresult << std::endl; 
     #endif
-    s_writeline(connection, api.result.c_str(), strlen(api.result.c_str()));
+    s_writeline(connection, apiresult.c_str(), strlen(apiresult.c_str()));
    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
    std::cout << "[DEBUG] [request_tn  ] Answered to request with TN." << std::endl;
@@ -107,14 +109,6 @@ void RequestHandler::InitRequest(Request *request) {
  request->resource = NULL;
  #ifdef DEBUG
  std::cout << "[DEBUG] [request     ] Initialised request." << std::endl;
- #endif
-}
-
-/* FreeRequest: Clear the request data */
-void RequestHandler::FreeRequest(Request *request) {
- if (request->resource) delete request->resource;
- #ifdef DEBUG
- std::cout << "[DEBUG] [request     ] Free'd request." << std::endl;
  #endif
 }
 

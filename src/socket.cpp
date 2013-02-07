@@ -5,7 +5,7 @@
  *
  *    Description:  Socket control
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  27/01/13 20:55:15
  *       Revision:  none
  *       Compiler:  g++

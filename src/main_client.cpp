@@ -100,6 +100,8 @@ int main(int argc, char *argv []) {
  }
  close(connection);
  
+ usleep(REQUEST_TIMEOUT_SEND*1000000);
+ 
  if ((connection=establishConnection(serverip, PORT)) < 0) return EXIT_FAILURE;
  
  benchmark0 = timestamp();

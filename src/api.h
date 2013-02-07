@@ -25,7 +25,7 @@
 
 class API : public BaseAPI {
 public:
- API(Json::Value);
+ std::string handle(void);
 };
 
 #endif /* API_H */

@@ -5,7 +5,7 @@
  *
  *    Description:  API sources
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  01/02/13 20:32:51
  *       Revision:  none
  *       Compiler:  g++
@@ -19,9 +19,8 @@
 // Headers
 #include "api.h"
 
-/* API: Constructor */
-API::API(Json::Value jVal) {
- initJSON(jVal);
- if (get("test") != false) setResult("{'test': true}");
- else setResult("{}"); // Set result, the requesthandler will get this.
+/* handle: Handle request */
+std::string API::handle() {
+ if (get("test") != false) return "{'test': true}";
+ return "{}";
 }

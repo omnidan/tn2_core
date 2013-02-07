@@ -5,7 +5,7 @@
  *
  *    Description:  Socket control headers
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  27/01/13 20:56:23
  *       Revision:  none
  *       Compiler:  g++

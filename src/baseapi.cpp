@@ -5,7 +5,7 @@
  *
  *    Description:  BaseAPI sources
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  02/02/13 17:47:34
  *       Revision:  none
  *       Compiler:  g++
@@ -19,15 +19,25 @@
 // Headers
 #include "baseapi.h"
 
-void BaseAPI::initJSON(Json::Value jValue) {
- jRoot = jValue;
+/* init: Initialise the API, called by RequestHandler */
+std::string BaseAPI::init(Json::Value jVal, char *cip) {
+ jRoot = jVal;
+ cPeer = (std::string)cip;
+ return handle();
 }
 
-Json::Value BaseAPI::get(const char *key) {
+/* handle: Prototype for API */
+std::string BaseAPI::handle() {
+ return "{\"type\": \"error\", \"msg\": \"Invalid API.\"}";
+}
+
+/* get: Get a value from the request */
+Json::Value BaseAPI::get(std::string key) {
  if (jRoot.isMember(key)) return jRoot.get(key, jRoot);
  else return (Json::Value)false;
 }
 
-void BaseAPI::setResult(const char *msg) {
- result = (std::string)msg;
+/* peer: Get the IP address of the peer */
+std::string BaseAPI::peer() {
+ return cPeer;
 }

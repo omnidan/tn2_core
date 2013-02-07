@@ -5,7 +5,7 @@
  *
  *    Description:  BaseAPI headers
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  02/02/13 16:46:33
  *       Revision:  none
  *       Compiler:  g++
@@ -28,11 +28,12 @@
 class BaseAPI {
 private:
  Json::Value jRoot;
+ std::string cPeer;
 public:
- void initJSON(Json::Value);
- Json::Value get(const char *);
- void setResult(const char *);
- std::string result;
+ std::string init(Json::Value, char *);
+ virtual std::string handle(void);
+ Json::Value get(std::string);
+ std::string peer(void);
 };
 
 #endif /* BASEAPI_H */

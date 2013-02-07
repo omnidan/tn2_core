@@ -5,7 +5,7 @@
  *
  *    Description:  Request handler headers
  *
- *        Version:  1.0
+ *        Version:  1.1
  *        Created:  27/01/13 21:48:26
  *       Revision:  none
  *       Compiler:  g++
@@ -52,11 +52,8 @@ private:
  Json::Reader jReader;
  Json::Value jRoot;
  char *clientip;
- bool first_line;
  void InitRequest(Request *);
- void FreeRequest(Request *);
  bool outputHTTP(int, Request *, std::string);
- bool parseHTTPHeader(char *, Request *);
  bool parseJSON();
 public:
  RequestHandler(int, char*);
