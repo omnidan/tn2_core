@@ -36,21 +36,25 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    #ifdef DEBUG
    std::cout << "[DEBUG] [request_http] This is an HTTP request." << std::endl;
    #endif
-   if (request.status == 200) {
+   if ((request.status == 200) && (request.method != UNSUPPORTED)) {
     #ifdef DEBUG
     std::cout << "[DEBUG] [request_http] Status 200, returning result." << std::endl;
     #endif
-    if (parseJSON()) {
-     API api = API();
-     std::string apiresult = api.init(jRoot, cip);
+    if (request.method == HEAD) {
+     outputHTTP(connection, &request, ""); // Only show the headers.
+    } else {
+     if (parseJSON()) {
+      API api = API();
+      std::string apiresult = api.init(jRoot, cip);
+      #ifdef DEBUG
+      std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(apiresult.c_str()) << "): " << apiresult << std::endl;
+      #endif
+      outputHTTP(connection, &request, apiresult.c_str());
+     } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
      #ifdef DEBUG
-     std::cout << "[DEBUG] [request_api ] Got API result(" << strlen(apiresult.c_str()) << "): " << apiresult << std::endl;
+     std::cout << "[DEBUG] [request_http] Answered to request with HTTP." << std::endl;
      #endif
-     outputHTTP(connection, &request, apiresult.c_str());
-    } else outputHTTP(connection, &request, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}");
-    #ifdef DEBUG
-    std::cout << "[DEBUG] [request_http] Answered to request with HTTP." << std::endl;
-    #endif
+    }
    } else {
     std::stringstream sbuffer;
     sbuffer << "{\"type\": \"error\", \"msg\": \"HTTP Error " << request.status << "\"}";
@@ -201,7 +205,7 @@ bool RequestHandler::outputHTTP(int connection, Request *request, std::string co
  s_writeline(connection, sbuffer.str().c_str(), strlen(sbuffer.str().c_str()));
  sbuffer.str(std::string());
  s_writeline(connection, "\r\n", 2);
- s_writeline(connection, content.c_str(), strlen(content.c_str()));
+ if (request->method == GET) s_writeline(connection, content.c_str(), strlen(content.c_str())); // If this isn't a GET request, it's a HEAD request, which doesn't want the contents.
  
  return true;
 }
