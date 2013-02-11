@@ -3,4 +3,3 @@
  * Improve the client (main_client.cpp)
  * Limit thread amount (look into socket.cpp)
  * Create a blacklist for IPs (either requesthandler.cpp [core-specific] or api.cpp [api-specific])
- * It seems like DDOS is possible now due to EMFILE. (socket.cpp/requesthandler.cpp)
