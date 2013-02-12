@@ -82,27 +82,31 @@ void *newconn(void *ptr) {
  conndata *tdata;
  tdata = (conndata *)ptr;
  
- // Deallocate resources upon return
- if ((pthread_detach(pthread_self())) < 0) std::cout << "[WARN ] [child       ] Couldn't detach thread." << std::endl;
- 
- #ifdef DEBUG
- std::cout << "[DEBUG] [child       ] New connection. Forked child process." << std::endl;
- #endif
- 
- if ((tdata->cip = inet_ntoa(tdata->client.sin_addr)) < 0) {
-  std::cout << "[ERROR] [child       ] Failed to get peer address." << std::endl;
-  pthread_exit(0);
- } 
- #ifdef DEBUG
- std::cout << "[DEBUG] [child       ] Peer address: " << tdata->cip << std::endl;
- #endif
- 
- RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
- if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
- #ifdef DEBUG
- else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
- #endif
- pthread_exit(0); // Kill child process
+ try {
+  // Deallocate resources upon return
+  if ((pthread_detach(pthread_self())) < 0) std::cout << "[WARN ] [child       ] Couldn't detach thread." << std::endl;
+  
+  #ifdef DEBUG
+  std::cout << "[DEBUG] [child       ] New connection. Forked child process." << std::endl;
+  #endif
+  
+  if ((tdata->cip = inet_ntoa(tdata->client.sin_addr)) < 0) {
+   std::cout << "[ERROR] [child       ] Failed to get peer address." << std::endl;
+   pthread_exit(0);
+  } 
+  #ifdef DEBUG
+  std::cout << "[DEBUG] [child       ] Peer address: " << tdata->cip << std::endl;
+  #endif
+  
+  RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
+  if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
+  #ifdef DEBUG
+  else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
+  #endif
+ } catch (std::exception &e) {
+  std::cout << "[ERROR] [child       ] Caught an exception: " << e.what() << std::endl;
+ }
+ pthread_exit(0); // Kill thread
 }
 
 /* loop: Main loop for the socket */
