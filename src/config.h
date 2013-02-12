@@ -19,18 +19,17 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// User settings (change if you want to)
-#define PORT		1337
+// System settings/limits
+#define PORT			1337	// The port it listens for requests on
+#define LISTENQ			100	// The amount of connections at once passed to listen()
+#define BUFFER_LIMIT		1024	// The maximum size of a request
+#define REQUEST_TIMEOUT_RECV	3	// The timeout when receiving a request (in seconds)
+#define REQUEST_TIMEOUT_SEND	3	// The timeout when sending a request (in seconds)
+
+// Version specific settings (do not change)
 #define NAME		"tn2_core"
 #define VERSION		"1.1b"
 #define VERSION_TAG	"BETA"
-
-// System settings/limits (do not change if you don't know what you're doing)
-#define LISTENQ			100
-#define BUFFER_LIMIT		1024
-#define REQUEST_TIMEOUT_RECV	3
-#define REQUEST_TIMEOUT_SEND	3
-#define MAX_CONNECTIONS		10000
 
 // Switch settings (can be turned on/off)
 // #define DEBUG // Debug setting, enable by compiling with -DDEBUG
