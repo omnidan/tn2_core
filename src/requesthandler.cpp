@@ -21,7 +21,6 @@
 
 /* RequestHandler: Constructor */
 RequestHandler::RequestHandler(int connection, char *cip) {
- // TODO: Create a blacklist for IPs
  clientip = cip;
  
  // Initialise request
