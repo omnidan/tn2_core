@@ -6,4 +6,3 @@
  * [WARN ] [socket      ] Couldn't accept connection. (ERRNO: 24) - When connecting with many clients locally
  * [WARN ] [request     ] Couldn't handle request, killing it. - Check this warning
  * Check for ram leaks, it seems like there is one.
- * All std::runtime_error's should be parsed and displayed as such and shouldn't exit the program.
