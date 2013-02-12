@@ -6,3 +6,4 @@
  * [WARN ] [socket      ] Couldn't accept connection. (ERRNO: 24) - When connecting with many clients locally
  * [WARN ] [request     ] Couldn't handle request, killing it. - Check this warning
  * Check for ram leaks, it seems like there is one.
+ * Check the warnings in the json library.
