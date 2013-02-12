@@ -40,7 +40,7 @@ void versioninfo(bool booting) {
   std::cout << "[INFO ] [main        ] Compilation configuration:" << std::endl;
   std::cout << "[INFO ] [main        ]  PORT=" << PORT << std::endl;
   std::cout << "[INFO ] [main        ]  LISTENQ=" << LISTENQ << std::endl;
-  std::cout << "[INFO ] [main        ]  MAX_REQ_LINE=" << MAX_REQ_LINE << std::endl;
+  std::cout << "[INFO ] [main        ]  BUFFER_LIMIT=" << BUFFER_LIMIT << std::endl;
   std::cout << "[INFO ] [main        ]  REQUEST_TIMEOUT_RECV=" << REQUEST_TIMEOUT_RECV << std::endl;
   std::cout << "[INFO ] [main        ]  REQUEST_TIMEOUT_SEND=" << REQUEST_TIMEOUT_SEND << std::endl;
   #ifdef DEBUG

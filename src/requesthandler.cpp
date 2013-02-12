@@ -118,7 +118,7 @@ void RequestHandler::InitRequest(Request *request) {
 
 /* handle: Handle a request */
 bool RequestHandler::handle(int connection) {
- char buffer[MAX_REQ_LINE] = {0};
+ char buffer[BUFFER_LIMIT] = {0};
  int rval;
  fd_set fds;
  struct timeval tv;
@@ -137,7 +137,7 @@ bool RequestHandler::handle(int connection) {
   if (rval < 0) std::cout << "[WARN ] [request     ] Couldn't select from request." << std::endl;
   else if (rval == 0) return false; // Timeout, kill request
   else {
-   s_readline(connection, buffer, MAX_REQ_LINE - 1);
+   s_readline(connection, buffer, BUFFER_LIMIT - 1);
    
    #ifdef DEBUG
    std::cout << "[DEBUG] [request     ] Received buffer: " << buffer << std::endl;

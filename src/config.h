@@ -27,7 +27,7 @@
 
 // System settings/limits (do not change if you don't know what you're doing)
 #define LISTENQ			100
-#define MAX_REQ_LINE		1024
+#define BUFFER_LIMIT		1024
 #define REQUEST_TIMEOUT_RECV	3
 #define REQUEST_TIMEOUT_SEND	3
 #define MAX_CONNECTIONS		10000
