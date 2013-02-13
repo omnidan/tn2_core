@@ -6,6 +6,8 @@ Copyright (c) 2013 Daniel Bugl, TouchLay. All rights reserved.
 
 TouchNet 2 is a networking framework written in C/C++ which implements modules coded in interpreted languages. The modules can be dynamically loaded and managed.
 
+INFO: Use the 1.0 branch for now: https://github.com/TouchLay/tn2_core/tree/1.0 - threads in 1.1 are still a bit unstable.
+
 .. contents::
 
 
