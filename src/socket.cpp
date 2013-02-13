@@ -103,8 +103,10 @@ void *newconn(void *ptr) {
   #ifdef DEBUG
   else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
   #endif
- } catch (std::exception &e) {
+ } catch (const std::exception &e) {
   std::cout << "[ERROR] [child       ] Caught an exception: " << e.what() << std::endl;
+ } catch (...) {
+  std::cout << "[ERROR] [child       ] Caught an unknown exception." << std::endl;
  }
  pthread_exit(0); // Kill thread
 }
