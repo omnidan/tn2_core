@@ -100,8 +100,13 @@ void *newconn(void *ptr) {
   
   RequestHandler(tdata->connection, tdata->cip); // Initialise request handler
   // Shutdown socket with action 0: Stop receiving data for this socket. If further data arrives, reject it. 
-  if (shutdown(tdata->connection, 0) < 0) std::cout << "[WARN ] [child       ] Couldn't shutdown connection." << std::endl;
-  //if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
+  //if (shutdown(tdata->connection, 0) < 0) std::cout << "[WARN ] [child       ] Couldn't shutdown connection." << std::endl;
+  int n = 1;
+  char buffer[256];
+  while (n != 0) {
+   n = read(tdata->connection, buffer, 255);
+  }
+  if (close(tdata->connection) < 0) std::cout << "[WARN ] [child       ] Couldn't close connection." << std::endl;
   #ifdef DEBUG
   else std::cout << "[DEBUG] [child       ] Connection closed. Killing child process." << std::endl;
   #endif

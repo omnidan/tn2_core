@@ -59,7 +59,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
     sbuffer << "{\"type\": \"error\", \"msg\": \"HTTP Error " << request.status << "\"}";
     outputHTTP(connection, &request, sbuffer.str());
    }
-   usleep(REQUEST_TIMEOUT_SEND*1000000);
+   //usleep(REQUEST_TIMEOUT_SEND*1000000);
   } else if (request.type == TN) {
    #ifdef DEBUG
    std::cout << "[DEBUG] [request_tn  ] This is a TN request." << std::endl;
@@ -74,7 +74,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    } else s_writeline(connection, "{\"type\": \"error\", \"msg\": \"Invalid JSON.\"}", 41);
    #ifdef DEBUG
    std::cout << "[DEBUG] [request_tn  ] Answered to request with TN." << std::endl;
-   usleep(REQUEST_TIMEOUT_SEND*1000000);
+   //usleep(REQUEST_TIMEOUT_SEND*1000000);
    #endif
   } else std::cout << "[WARN ] [request     ] Unknown request type, killing request." << std::endl;
  } else std::cout << "[WARN ] [request     ] Couldn't handle request (timeout?), killing it." << std::endl;
