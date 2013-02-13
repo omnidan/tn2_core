@@ -77,7 +77,7 @@ RequestHandler::RequestHandler(int connection, char *cip) {
    usleep(REQUEST_TIMEOUT_SEND*1000000);
    #endif
   } else std::cout << "[WARN ] [request     ] Unknown request type, killing request." << std::endl;
- } else std::cout << "[WARN ] [request     ] Couldn't handle request, killing it." << std::endl;
+ } else std::cout << "[WARN ] [request     ] Couldn't handle request (timeout?), killing it." << std::endl;
 }
 
 /* parseJSON: JSON parser */
