@@ -71,4 +71,3 @@ License
 -------
 
 The tn2_core (TouchNet 2.X Core) source is licensed under BSD 4-clause license. For further information please consult the LICENSE file.
-complcache_start_auto_complete)OB
