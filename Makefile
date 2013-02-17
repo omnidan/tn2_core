@@ -8,7 +8,7 @@ CPP=g++
 FLAGS_SERVER=-lpthread
 FLAGS=-ansi -pedantic -Wall -s -O2 # -Werror
 LDFLAGS=
-DEBUG_FLAGS=-g -lm -Wall -DDEBUG
+DEBUG_FLAGS=-g -lm -DDEBUG
 
 all: clean $(EXECUTABLE) $(EXECUTABLE_CLIENT) $(EXECUTABLE)_dbg $(EXECUTABLE_CLIENT)_dbg
 
